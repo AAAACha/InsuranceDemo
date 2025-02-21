@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.schj.mapper.InsuranceProductMapper">
+
+    <resultMap id="productResultMap" type="com.schj.pojo.po.InsuranceProduct">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+
+        <result property="productCode" column="product_code" jdbcType="VARCHAR"/>
+        <result property="productName" column="product_name" jdbcType="VARCHAR"/>
+        <result property="productCategory" column="product_category" jdbcType="VARCHAR"/>
+        <result property="durationType" column="duration_type" jdbcType="VARCHAR"/>
+        <result property="productStatus" column="product_status" jdbcType="VARCHAR"/>
+
+        <result property="createdTime" column="created_time"
+                jdbcType="TIMESTAMP" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler"/>
+        <result property="updatedTime" column="updated_time"
+                jdbcType="TIMESTAMP" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler"/>
+
+        <result property="creator" column="creator" jdbcType="VARCHAR"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+
+        <result property="isDeleted" column="is_deleted" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <insert id="insertInsuranceProduct">
+        insert into insurance_product
+        (id, product_code, product_name, product_category, duration_type,
+         product_status, created_time, creator,
+         updated_time, updater, is_deleted)
+            value
+            (#{id}, #{productCode}, #{productName}, #{productCategory},
+             #{durationType}, #{productStatus}, #{createdTime}, #{creator}, #{updatedTime},
+             #{updater},
+             #{isDeleted})
+    </insert>
+
+    <update id="updateInsuranceProductById">
+
+    </update>
+
+    <update id="deleteInsuranceProductById">
+        update insurance_product
+        set is_deleted = 1
+        where id = #{id}
+    </update>
+
+    <select id="getInsuranceProductById"
+            resultMap="productResultMap">
+        select *
+        from insurance_product
+        where id = #{id}
+    </select>
+
+
+</mapper>

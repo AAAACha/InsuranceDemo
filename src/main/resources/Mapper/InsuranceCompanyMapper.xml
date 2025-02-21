@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.schj.mapper.InsuranceCompanyMapper">
+
+    <resultMap id="companyResultMap" type="com.schj.pojo.po.InsuranceCompany">
+
+        <id property="id" column="id" jdbcType="BIGINT"/>
+
+        <result property="companyCode" column="company_code" jdbcType="VARCHAR"/>
+        <result property="companyName" column="company_name" jdbcType="VARCHAR"/>
+        <result property="companyType" column="company_type" jdbcType="VARCHAR"/>
+
+        <result property="createdTime" column="created_time"
+                jdbcType="TIMESTAMP" javaType="java.time.LocalDateTime"/>
+        <result property="creator" column="creator" jdbcType="VARCHAR"/>
+        <result property="updatedTime" column="updated_time"
+                jdbcType="TIMESTAMP" javaType="java.time.LocalDateTime"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+
+        <result property="isDeleted" column="is_deleted"
+                jdbcType="INTEGER" javaType="java.lang.Integer"/>
+    </resultMap>
+
+    <insert id="insertInsuranceCompany">
+        insert into insurance_company
+        (id,company_code,company_name,company_type,created_time,creator,updated_time,updater,is_deleted)
+        value
+        (#{id},#{companyCode},#{companyName},#{companyType},#{createdTime},#{creator},#{updatedTime},#{updater},#{isDeleted})
+
+    </insert>
+
+    <update id="updateInsuranceCompanyById" parameterType="com.schj.pojo.po.InsuranceCompany">
+        UPDATE insurance_company
+        SET company_code = #{companyCode},
+            company_name = #{companyName},
+            company_type = #{companyType},
+            updated_time = #{updatedTime},
+            updater = #{updater}
+        WHERE id = #{id}
+    </update>
+
+    <update id="deleteInsuranceCompanyById">
+        update insurance_company
+        set is_deleted = 1
+        where id = #{id}
+    </update>
+
+    <select id="getInsuranceCompanyById"
+            resultMap="companyResultMap">
+        select *
+        from insurance_company
+        where id = #{id}
+    </select>
+</mapper>

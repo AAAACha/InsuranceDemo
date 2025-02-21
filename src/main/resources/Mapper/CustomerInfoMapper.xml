@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.schj.mapper.CustomerInfoMapper">
+
+    <resultMap id="customerInfoResultMap" type="com.schj.pojo.po.CustomerInfo">
+
+        <id property="id" column="id"/>
+
+        <result property="idType" column="id_type"/>
+        <result property="idNumber" column="id_number"/>
+        <result property="fullName" column="full_name"/>
+        <result property="gender" column="gender"/>
+        <result property="contactPhone" column="contact_phone"/>
+        <result property="contactAddress" column="contact_address"/>
+        <result property="benefitRatio" column="benefit_ratio"/>
+        <result property="createdTime" column="created_time"/>
+        <result property="creator" column="creator"/>
+        <result property="updatedTime" column="updated_time"/>
+        <result property="updater" column="updater"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+
+    <insert id="insertCustomerInfoService">
+        insert into customer_info
+        (id, id_type, id_number, full_name, gender, contact_phone,
+         contact_address, benefit_ratio, created_time, creator, updated_time,
+         updater, is_deleted)
+            value
+            (#{id}, #{idType}, #{idNumber}, #{fullName}, #{gender},
+             #{contactPhone}, #{contactAddress}, #{benefitRatio},
+             #{createdTime}, #{creator}, #{updatedTime}, #{updater},
+             #{isDeleted})
+    </insert>
+
+    <update id="updateCustomerInfoById" parameterType="com.schj.pojo.po.CustomerInfo">
+        update customer_info
+        set
+            id_type = #{idType},
+            id_number = #{idNumber},
+            full_name = #{fullName},
+            gender = #{gender},
+            contact_phone = #{contactPhone},
+            contact_address = #{contactAddress},
+            benefit_ratio = #{benefitRatio},
+            updated_time = #{updatedTime},
+            updater = #{updater}
+            where id = #{id}
+    </update>
+
+    <update id="deleteCustomerInfoById">
+        update customer_info
+        set is_deleted = 1
+        where id = #{id}
+    </update>
+
+    <select id="getCustomerInfoById"
+            resultMap="customerInfoResultMap">
+        select *
+        from customer_info
+        where id = #{id}
+    </select>
+</mapper>
