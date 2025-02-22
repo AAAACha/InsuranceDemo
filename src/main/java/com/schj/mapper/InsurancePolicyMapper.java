@@ -1,5 +1,7 @@
 package com.schj.mapper;
 
+import com.github.pagehelper.Page;
+import com.schj.pojo.dto.request.PolicyQueryRequest;
 import com.schj.pojo.po.InsurancePolicy;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
@@ -24,4 +26,6 @@ public interface InsurancePolicyMapper{
     InsurancePolicy getInsurancePolicyById(Long id);
 
     List<InsurancePolicy> getInsurancePolicyList(int count);
+
+    Page list(PolicyQueryRequest policyQueryRequest);
 }

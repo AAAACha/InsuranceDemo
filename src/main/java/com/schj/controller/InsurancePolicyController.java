@@ -2,7 +2,9 @@ package com.schj.controller;
 
 
 import com.schj.pojo.dto.request.InsurancePolicyReqDTO;
+import com.schj.pojo.dto.request.PolicyQueryRequest;
 import com.schj.pojo.dto.response.InsurancePolicyResDTO;
+import com.schj.pojo.po.PageBean;
 import com.schj.pojo.po.Result;
 import com.schj.service.InsurancePolicyService;
 import lombok.extern.slf4j.Slf4j;
@@ -100,4 +102,11 @@ public class InsurancePolicyController {
             return Result.error("删除保险单失败");
         }
     }
+
+    @GetMapping("/search")
+    public Result searchPolicies(@RequestParam PolicyQueryRequest policyQueryRequest) {
+        PageBean pageBean = insurancePolicyService.getPoliciesByCondition(policyQueryRequest);
+        return Result.success(pageBean);
+    }
+
 }

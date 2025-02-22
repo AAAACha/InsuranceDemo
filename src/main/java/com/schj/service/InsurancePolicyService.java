@@ -1,7 +1,9 @@
 package com.schj.service;
 
 import com.schj.pojo.dto.request.InsurancePolicyReqDTO;
+import com.schj.pojo.dto.request.PolicyQueryRequest;
 import com.schj.pojo.dto.response.InsurancePolicyResDTO;
+import com.schj.pojo.po.PageBean;
 import org.springframework.stereotype.Service;
 
 /**
@@ -18,4 +20,6 @@ public interface InsurancePolicyService {
     void updateInsurancePolicyById(Long id, InsurancePolicyReqDTO insurancePolicyReqDTO);
 
     void deleteInsurancePolicyById(Long id);
+
+    PageBean getPoliciesByCondition(PolicyQueryRequest policyQueryRequest);
 }

@@ -4,7 +4,6 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.schj.mapper.InsurancePolicyMapper">
-
     <resultMap id="InsurancePolicyResultMap" type="com.schj.pojo.po.InsurancePolicy">
         <!-- 主键字段 -->
         <id column="id" property="id" jdbcType="BIGINT"/>
@@ -49,5 +48,31 @@
         limit #{count};
     </select>
 
-
+    <select id="list" resultMap="InsurancePolicyResultMap"
+            parameterType="com.schj.pojo.dto.request.PolicyQueryRequest">
+        SELECT * FROM insurance_policy
+        <where>
+            <if test="policyNo != null and query.policyNo != ''">
+                and policy_no = #{query.policyNo}
+            </if>
+            <if test="companyName != null and query.companyName != ''">
+                and company_name LIKE CONCAT('%', #{query.companyName}, '%')
+            </if>
+            <if test="productName != null and query.productName != ''">
+                and product_name LIKE CONCAT('%', #{query.productName}, '%')
+            </if>
+            <if test="startApplicationTime != null">
+                and application_time &gt;= #{query.startApplicationTime}
+            </if>
+            <if test="endApplicationTime != null">
+                and application_time &lt;= #{query.endApplicationTime}
+            </if>
+            <if test="query.startEffectiveTime != null">
+                effective_time &gt;= #{query.startEffectiveTime}
+            </if>
+            <if test="query.endEffectiveTime != null">
+                effective_time &lt;= #{query.endEffectiveTime}
+            </if>
+        </where>
+    </select>
 </mapper>

@@ -1,10 +1,14 @@
 package com.schj.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.schj.mapper.CustomerInfoMapper;
 import com.schj.mapper.InsurancePolicyMapper;
 import com.schj.mapper.InsuranceProductMapper;
 import com.schj.pojo.dto.request.InsurancePolicyReqDTO;
+import com.schj.pojo.dto.request.PolicyQueryRequest;
 import com.schj.pojo.dto.response.InsurancePolicyResDTO;
 import com.schj.pojo.po.*;
 import com.schj.service.InsurancePolicyService;
@@ -153,4 +157,11 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
         throw new RuntimeException("您要删除的保单信息不存在");
     }
 
+    @Override
+    public PageBean getPoliciesByCondition(PolicyQueryRequest policyQueryRequest) {
+        PageHelper.startPage(policyQueryRequest.getPageNum(), policyQueryRequest.getPageSize());
+        Page resultPage = insurancePolicyMapper.list(policyQueryRequest);
+
+        return new PageBean(resultPage.getTotal(), resultPage.getResult());
+    }
 }
