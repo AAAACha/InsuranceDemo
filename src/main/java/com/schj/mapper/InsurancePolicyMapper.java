@@ -5,6 +5,8 @@ import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 /**
  * @author AvA
  * @since 2025-02-21
@@ -20,4 +22,6 @@ public interface InsurancePolicyMapper{
 
     @Select("select * from insurance_system.insurance_policy ip where id = #{id}")
     InsurancePolicy getInsurancePolicyById(Long id);
+
+    List<InsurancePolicy> getInsurancePolicyList(int count);
 }

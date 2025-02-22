@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.schj.mapper.InsurancePolicyMapper">
+
+    <resultMap id="InsurancePolicyResultMap" type="com.schj.pojo.po.InsurancePolicy">
+        <!-- 主键字段 -->
+        <id column="id" property="id" jdbcType="BIGINT"/>
+
+        <!-- 核心业务字段 -->
+        <result column="policy_no" property="policyNo" jdbcType="VARCHAR"/>
+        <result column="proposal_no" property="proposalNo" jdbcType="VARCHAR"/>
+        <result column="company_code" property="companyCode" jdbcType="CHAR"/>
+        <result column="company_name" property="companyName" jdbcType="VARCHAR"/>
+        <result column="product_code" property="productCode" jdbcType="VARCHAR"/>
+        <result column="product_name" property="productName" jdbcType="VARCHAR"/>
+
+        <!-- 状态与时间相关 -->
+        <result column="policy_status" property="policyStatus" jdbcType="VARCHAR"/>
+        <result column="application_time" property="applicationTime" jdbcType="TIMESTAMP"/>
+        <result column="effective_time" property="effectiveTime" jdbcType="TIMESTAMP"/>
+
+        <!-- 金额相关字段 -->
+        <result column="premium" property="premium" jdbcType="DECIMAL"/>
+        <result column="insured_amount" property="insuredAmount" jdbcType="DECIMAL"/>
+
+        <!-- 缴费信息 -->
+        <result column="payment_years" property="paymentYears" jdbcType="INTEGER"/>
+        <result column="payment_method" property="paymentMethod" jdbcType="VARCHAR"/>
+        <result column="payment_times" property="paymentTimes" jdbcType="INTEGER"/>
+
+        <!-- 保障信息 -->
+        <result column="coverage_period" property="coveragePeriod" jdbcType="VARCHAR"/>
+
+        <!-- 系统字段 -->
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP"/>
+        <result column="updater" property="updater" jdbcType="VARCHAR"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="TINYINT"/>
+    </resultMap>
+    <select id="getInsurancePolicyList"
+            resultMap="InsurancePolicyResultMap">
+        select *
+        from insurance_policy
+        order by updated_time desc
+        limit #{count};
+    </select>
+
+
+</mapper>
