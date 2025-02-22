@@ -1,17 +1,20 @@
-package com.schj.pojo.po;
+package com.schj.pojo.dto.response;
 
+import com.schj.pojo.po.CustomerInfo;
+import com.schj.pojo.po.InsuranceProduct;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
- * @author AvA
- * @since 2025-02-21
+ * @Descriptioin InsurancePolicyResDTO
+ * @Author AvA
+ * @Date 2025-02-22
  */
 @Data
-public class InsurancePolicy{
-
+public class InsurancePolicyResDTO {
     private Long id;
 
     private String policyNo;
@@ -49,4 +52,8 @@ public class InsurancePolicy{
     private String updater;
 
     private Integer isDeleted;
+
+    private List<CustomerInfo> customerInfoList;
+
+    private List<InsuranceProduct> insuranceProductList;
 }
