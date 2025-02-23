@@ -40,6 +40,54 @@
         <result column="updater" property="updater" jdbcType="VARCHAR"/>
         <result column="is_deleted" property="isDeleted" jdbcType="TINYINT"/>
     </resultMap>
+    <insert id="insertInsurancePolicy"
+            parameterType="com.schj.pojo.po.InsurancePolicy">
+        INSERT INTO insurance_policy (
+            id,
+            policy_no,
+            proposal_no,
+            company_code,
+            company_name,
+            product_code,
+            product_name,
+            policy_status,
+            application_time,
+            effective_time,
+            premium,
+            insured_amount,
+            payment_years,
+            payment_method,
+            payment_times,
+            coverage_period,
+            created_time,
+            creator,
+            updated_time,
+            updater,
+            is_deleted
+        ) VALUES (
+                     #{id},
+                     #{policyNo},
+                     #{proposalNo},
+                     #{companyCode},
+                     #{companyName},
+                     #{productCode},
+                     #{productName},
+                     #{policyStatus},
+                     #{applicationTime},
+                     #{effectiveTime},
+                     #{premium},
+                     #{insuredAmount},
+                     #{paymentYears},
+                     #{paymentMethod},
+                     #{paymentTimes},
+                     #{coveragePeriod},
+                     #{createdTime},
+                     #{creator},
+                     #{updatedTime},
+                     #{updater},
+                     #{isDeleted}
+                 )
+    </insert>
     <select id="getInsurancePolicyList"
             resultMap="InsurancePolicyResultMap">
         select *

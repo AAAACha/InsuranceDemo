@@ -28,4 +28,6 @@ public interface InsurancePolicyMapper{
     List<InsurancePolicy> getInsurancePolicyList(int count);
 
     Page list(PolicyQueryRequest policyQueryRequest);
+
+    void insertInsurancePolicy(InsurancePolicy insurancePolicy);
 }

@@ -3,6 +3,8 @@ package com.schj.mapper;
 import com.schj.pojo.po.CustomerInfo;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 /**
  * @author AvA
  * @since 2025-02-21
@@ -37,4 +39,17 @@ public interface CustomerInfoMapper{
      * @return
      */
     Boolean deleteCustomerInfoById(Long id);
+
+    /**
+     * 根据保单id删除客户信息
+     * @param id
+     */
+    void deleteInsurancePolicyByPolicyId(Long id);
+
+    /**
+     * 根据保单id查找客户信息
+     * @param id
+     * @return
+     */
+    List<Long> getCustomerInfoByPolicyId(Long id);
 }

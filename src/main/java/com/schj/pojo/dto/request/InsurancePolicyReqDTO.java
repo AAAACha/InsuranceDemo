@@ -1,7 +1,6 @@
 package com.schj.pojo.dto.request;
 
 import com.schj.pojo.po.CustomerInfo;
-import com.schj.pojo.po.InsuranceProduct;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -42,7 +41,9 @@ public class InsurancePolicyReqDTO {
 
     private String coveragePeriod;
 
-    private List<CustomerInfo> customerInfoList;
+    private List<CustomerInfo> policyholderList;
 
-    private List<InsuranceProduct> insuranceProductList;
+    private List<CustomerInfo> insuredList;
+
+    private List<CustomerInfo> beneficiaryList;
 }

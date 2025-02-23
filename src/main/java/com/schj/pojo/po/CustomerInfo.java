@@ -12,6 +12,10 @@ import java.time.LocalDateTime;
 public class CustomerInfo{
     private Long id;
 
+    private Long policyId;
+
+    private String customerType;
+
     private String idType;
 
     private String idNumber;

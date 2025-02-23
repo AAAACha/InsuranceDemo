@@ -9,6 +9,11 @@ import lombok.Data;
  */
 @Data
 public class CustomerInfoReqDTO {
+
+    private Long policyId;
+
+    private String customerType;
+
     private String idType;
 
     private String idNumber;

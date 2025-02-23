@@ -9,6 +9,8 @@
 
         <id property="id" column="id"/>
 
+        <result property="policyId" column="policy_id"/>
+        <result property="customerType" column="customer_type"/>
         <result property="idType" column="id_type"/>
         <result property="idNumber" column="id_number"/>
         <result property="fullName" column="full_name"/>
@@ -25,11 +27,11 @@
 
     <insert id="insertCustomerInfoService">
         insert into customer_info
-        (id, id_type, id_number, full_name, gender, contact_phone,
+        (id,policy_id,customer_type, id_type, id_number, full_name, gender, contact_phone,
          contact_address, benefit_ratio, created_time, creator, updated_time,
          updater, is_deleted)
             value
-            (#{id}, #{idType}, #{idNumber}, #{fullName}, #{gender},
+            (#{id}, #{policyId},#{customerType},#{idType}, #{idNumber}, #{fullName}, #{gender},
              #{contactPhone}, #{contactAddress}, #{benefitRatio},
              #{createdTime}, #{creator}, #{updatedTime}, #{updater},
              #{isDeleted})
@@ -56,10 +58,23 @@
         where id = #{id}
     </update>
 
+    <update id="deleteInsurancePolicyByPolicyId">
+        update customer_info
+        set is_deleted = 1
+        where policy_id = #{id}
+    </update>
+
     <select id="getCustomerInfoById"
             resultMap="customerInfoResultMap">
         select *
         from customer_info
         where id = #{id}
+    </select>
+
+    <select id="getCustomerInfoByPolicyId"
+            resultMap="customerInfoResultMap">
+        select *
+        from customer_info
+        where policy_id = #{id}
     </select>
 </mapper>
