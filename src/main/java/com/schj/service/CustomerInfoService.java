@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 @Service
 public interface CustomerInfoService {
 
-    Boolean insertCustomerInfoService(CustomerInfoReqDTO customerInfoReqDTO);
+    void insertCustomerInfoService(CustomerInfoReqDTO customerInfoReqDTO);
 
     CustomerInfoResDTO getCustomerInfoById(Long id);
 
-    Boolean updateCustomerInfoById(Long id, CustomerInfoReqDTO customerInfoReqDTO);
+    void updateCustomerInfoById(Long id, CustomerInfoReqDTO customerInfoReqDTO);
 
-    Boolean deleteCustomerInfoById(Long id);
+    void deleteCustomerInfoById(Long id);
 }

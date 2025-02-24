@@ -5,6 +5,7 @@ import com.schj.pojo.dto.request.CustomerInfoReqDTO;
 import com.schj.pojo.dto.response.CustomerInfoResDTO;
 import com.schj.pojo.po.Result;
 import com.schj.service.CustomerInfoService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/customer-info")
+@Slf4j
 public class CustomerInfoController {
 
     @Autowired
@@ -21,86 +23,90 @@ public class CustomerInfoController {
 
     /**
      * 新增客户信息
+     *
      * @param customerInfoReqDTO
      * @return
      */
     @PostMapping("/insertCustomerInfoService")
     public Result insertCustomerInfo(@RequestBody CustomerInfoReqDTO customerInfoReqDTO) {
-        if (BeanUtil.isNotEmpty(customerInfoReqDTO)) {
-            Boolean result = customerInfoService.insertCustomerInfoService(customerInfoReqDTO);
-            if (result) {
+        try {
+            if (BeanUtil.isNotEmpty(customerInfoReqDTO)) {
+                customerInfoService.insertCustomerInfoService(customerInfoReqDTO);
                 return Result.success();
             } else {
-                return Result.error("新增用户信息失败");
+                log.error("新增客户信息失败, 失败原因:请求体为空");
+                return Result.error("新增客户信息失败");
             }
+        } catch (Exception e) {
+            log.error("新增客户信息失败, 失败原因:" + e);
+            return Result.error("新增客户信息失败");
         }
-        return Result.error("用户信息不能为空");
     }
 
     /**
      * 根据id查询客户信息
+     *
      * @param id
      * @return
      */
     @GetMapping("/getCustomerInfoById/{id}")
     public Result getCustomerInfoById(@PathVariable Long id) {
-        if (BeanUtil.isNotEmpty(id)) {
-            CustomerInfoResDTO result = customerInfoService.getCustomerInfoById(id);
-            if (BeanUtil.isNotEmpty(result)) {
-                return Result.success(result);
+        try {
+            if (BeanUtil.isNotEmpty(id)) {
+                CustomerInfoResDTO result = customerInfoService.getCustomerInfoById(id);
+                    return Result.success(result);
             } else {
-                return Result.error("查询用户信息失败");
+                log.error("查询客户信息失败, 失败原因:id为空");
+                return Result.error("不能查询id为空的客户信息");
             }
-        } else {
-            return Result.error("不能查询id为空的客户信息");
+        } catch (Exception e) {
+            log.error("查询客户信息失败, 失败原因:"+e);
+            return Result.error("查询用户信息失败");
         }
     }
 
     /**
      * 根据id查询客户信息
+     *
      * @param id
      * @param customerInfoReqDTO
      * @return
      */
     @PutMapping("/updateCustomerInfoById/{id}")
     public Result updateCustomerInfoById(@PathVariable Long id, @RequestBody CustomerInfoReqDTO customerInfoReqDTO) {
-
-        if (BeanUtil.isNotEmpty(id)) {
-            if (BeanUtil.isNotEmpty(customerInfoService.getCustomerInfoById(id))) {
-                Boolean result = customerInfoService.updateCustomerInfoById(id, customerInfoReqDTO);
-                if (result) {
-                    return Result.success();
-                } else {
-                    return Result.error("修改客户信息失败");
-                }
+        try {
+            if (BeanUtil.isNotEmpty(id)) {
+                customerInfoService.updateCustomerInfoById(id, customerInfoReqDTO);
+                return Result.success();
             } else {
-                return Result.error("要修改的客户id不存在");
+                log.error("修改客户信息失败, 失败原因:请求体为空");
+                return Result.error("不能修改请求体为空的客户信息");
             }
-        } else {
-            return Result.error("不能修改id为空的客户信息");
+        } catch (Exception e) {
+            log.error("修改客户信息失败, 失败原因:"+e);
+            return Result.error("修改用户信息失败");
         }
     }
 
     /**
      * 根据id删除客户信息
+     *
      * @param id
      * @return
      */
     @DeleteMapping("/deleteCustomerInfoById/{id}")
-    public Result deleteCustomerInfoById(@PathVariable Long id){
-        if (BeanUtil.isNotEmpty(id)) {
-            if (BeanUtil.isNotEmpty(customerInfoService.getCustomerInfoById(id))) {
-                Boolean result = customerInfoService.deleteCustomerInfoById(id);
-                if (result) {
-                    return Result.success();
-                } else {
-                    return Result.error("删除客户信息失败");
-                }
+    public Result deleteCustomerInfoById(@PathVariable Long id) {
+        try {
+            if (BeanUtil.isNotEmpty(id)) {
+                customerInfoService.deleteCustomerInfoById(id);
+                return Result.success();
             } else {
-                return Result.error("要删除的客户id不存在");
+                log.error("删除客户信息失败, 失败原因:id为空");
+                return Result.error("不能删除id为空的客户信息");
             }
-        } else {
-            return Result.error("不能删除id为空的客户信息");
+        } catch (Exception e) {
+            log.error("删除客户信息失败, 失败原因:"+e);
+            return Result.error("删除用户信息失败");
         }
     }
 }
