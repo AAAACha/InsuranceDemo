@@ -9,15 +9,28 @@ import lombok.Data;
 @Data
 public class InsuranceProductReqDTO {
 
-    private Long id;
-
+    /**
+     * 险种代码
+     */
     private String productCode;
 
+    /**
+     * 险种名称
+     */
     private String productName;
 
+    /**
+     * 主附险标识
+     */
     private String productCategory;
 
+    /**
+     * 长短险标识
+     */
     private String durationType;
 
+    /**
+     * 险种状态
+     */
     private String productStatus;
 }

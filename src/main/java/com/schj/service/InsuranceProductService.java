@@ -12,11 +12,11 @@ import org.springframework.stereotype.Service;
 @Service
 public interface InsuranceProductService {
 
-    Boolean insertInsuranceProduct(InsuranceProductReqDTO insuranceProductReqDTO);
+    void insertInsuranceProduct(InsuranceProductReqDTO insuranceProductReqDTO);
 
     InsuranceProductResDTO getInsuranceProductById(Long id);
 
-    Boolean updateInsuranceProductById(InsuranceProductReqDTO insuranceProductReqDTO);
+    void updateInsuranceProductById(Long id, InsuranceProductReqDTO insuranceProductReqDTO);
 
-    Boolean deleteInsuranceProductById(Long id);
+    void deleteInsuranceProductById(Long id);
 }

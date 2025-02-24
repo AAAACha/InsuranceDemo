@@ -2,6 +2,7 @@ package com.schj.service.impl;
 
 
 import cn.hutool.core.bean.BeanUtil;
+import com.schj.mapper.EnumValue;
 import com.schj.mapper.InsuranceProductMapper;
 import com.schj.pojo.dto.request.InsuranceProductReqDTO;
 import com.schj.pojo.dto.response.InsuranceProductResDTO;
@@ -21,10 +22,13 @@ import java.time.LocalDateTime;
 public class InsuranceProductServiceImpl implements InsuranceProductService {
 
     @Autowired
-    InsuranceProductMapper insuranceProductMapper;
+    private InsuranceProductMapper insuranceProductMapper;
+
+    @Autowired
+    private EnumValue enumValue;
 
     @Override
-    public Boolean insertInsuranceProduct(InsuranceProductReqDTO insuranceProductReqDTO) {
+    public void insertInsuranceProduct(InsuranceProductReqDTO insuranceProductReqDTO) {
 
         InsuranceProduct insuranceProduct = BeanUtil.toBean(insuranceProductReqDTO, InsuranceProduct.class);
 
@@ -32,13 +36,34 @@ public class InsuranceProductServiceImpl implements InsuranceProductService {
         long id = snowflakeIdWorker.nextId();
         insuranceProduct.setId(id);
 
+        String productCategory = enumValue.getEnumByCode(insuranceProductReqDTO.getProductCategory());
+        if(BeanUtil.isNotEmpty(productCategory)){
+            insuranceProduct.setProductCategory(productCategory);
+        } else {
+            throw new RuntimeException("您输入的主附险标识不存在");
+        }
+
+        String durationType = enumValue.getEnumByCode(insuranceProductReqDTO.getDurationType());
+        if(BeanUtil.isNotEmpty(durationType)){
+            insuranceProduct.setDurationType(durationType);
+        } else {
+            throw new RuntimeException("您输入的长短险标识不存在");
+        }
+
+        String productStatus = enumValue.getEnumByCode(insuranceProductReqDTO.getProductStatus());
+        if(BeanUtil.isNotEmpty(productStatus)){
+            insuranceProduct.setProductStatus(productStatus);
+        } else {
+            throw new RuntimeException("您输入的险种状态不存在");
+        }
+
         insuranceProduct.setCreator("admin");
         insuranceProduct.setCreatedTime(LocalDateTime.now());
         insuranceProduct.setUpdater("admin");
         insuranceProduct.setUpdatedTime(LocalDateTime.now());
         insuranceProduct.setIsDeleted(0);
 
-        return insuranceProductMapper.insertInsuranceProduct(insuranceProduct);
+        insuranceProductMapper.insertInsuranceProduct(insuranceProduct);
     }
 
     @Override
@@ -51,18 +76,41 @@ public class InsuranceProductServiceImpl implements InsuranceProductService {
     }
 
     @Override
-    public Boolean updateInsuranceProductById(InsuranceProductReqDTO insuranceProductReqDTO) {
+    public void updateInsuranceProductById(Long id, InsuranceProductReqDTO insuranceProductReqDTO) {
 
         InsuranceProduct insuranceProduct = BeanUtil.toBean(insuranceProductReqDTO, InsuranceProduct.class);
+
+        insuranceProduct.setId(id);
+
+        String productCategory = enumValue.getEnumByCode(insuranceProductReqDTO.getProductCategory());
+        if(BeanUtil.isNotEmpty(productCategory)){
+            insuranceProduct.setProductCategory(productCategory);
+        } else {
+            throw new RuntimeException("您输入的主附险标识不存在");
+        }
+
+        String durationType = enumValue.getEnumByCode(insuranceProductReqDTO.getDurationType());
+        if(BeanUtil.isNotEmpty(durationType)){
+            insuranceProduct.setDurationType(durationType);
+        } else {
+            throw new RuntimeException("您输入的长短险标识不存在");
+        }
+
+        String productStatus = enumValue.getEnumByCode(insuranceProductReqDTO.getProductStatus());
+        if(BeanUtil.isNotEmpty(productStatus)){
+            insuranceProduct.setProductStatus(productStatus);
+        } else {
+            throw new RuntimeException("您输入的险种状态不存在");
+        }
 
         insuranceProduct.setUpdater("admin");
         insuranceProduct.setUpdatedTime(LocalDateTime.now());
 
-        return insuranceProductMapper.updateInsuranceProductById(insuranceProduct);
+        insuranceProductMapper.updateInsuranceProductById(insuranceProduct);
     }
 
     @Override
-    public Boolean deleteInsuranceProductById(Long id) {
-        return insuranceProductMapper.deleteInsuranceProductById(id);
+    public void deleteInsuranceProductById(Long id) {
+        insuranceProductMapper.deleteInsuranceProductById(id);
     }
 }

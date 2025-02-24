@@ -5,6 +5,7 @@ import com.schj.pojo.dto.request.InsuranceProductReqDTO;
 import com.schj.pojo.dto.response.InsuranceProductResDTO;
 import com.schj.pojo.po.Result;
 import com.schj.service.InsuranceProductService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/insurance-product")
+@Slf4j
 public class InsuranceProductController {
 
     @Autowired
@@ -21,61 +23,83 @@ public class InsuranceProductController {
 
     /**
      * 新增险种信息
+     *
      * @param insuranceProductReqDTO
      * @return
      */
-    @PostMapping("/insertInsuranceCompany")
-    public Result insertInsuranceCompany(@RequestBody InsuranceProductReqDTO insuranceProductReqDTO){
-        Boolean result = insuranceProductService.insertInsuranceProduct(insuranceProductReqDTO);
-        if(result){
+    @PostMapping("/insertInsuranceProduct")
+    public Result insertInsuranceProduct(@RequestBody InsuranceProductReqDTO insuranceProductReqDTO) {
+        try {
+            if (insuranceProductReqDTO == null) {
+                log.error("新增险种失败,失败原因为:请求体为空");
+                return Result.error("新增失败");
+            }
+            insuranceProductService.insertInsuranceProduct(insuranceProductReqDTO);
             return Result.success();
-        } else {
+        } catch (Exception e) {
+            log.error("新增险种失败,失败原因为:" + e);
             return Result.error("插入失败");
         }
     }
 
     /**
      * 根据id获取险种信息
+     *
      * @param id
      * @return
      */
-    @GetMapping("/getInsuranceCompanyById/{id}")
-    public Result getInsuranceCompanyById(@PathVariable Long id){
-        InsuranceProductResDTO result = insuranceProductService.getInsuranceProductById(id);
-        if(result != null){
-            return Result.success(result);
-        } else {
+    @GetMapping("/getInsuranceProductById/{id}")
+    public Result getInsuranceProductById(@PathVariable Long id) {
+        try {
+            InsuranceProductResDTO result = insuranceProductService.getInsuranceProductById(id);
+            if (result != null) {
+                return Result.success(result);
+            } else {
+                log.error("查询险种失败,失败原因为:未找到对应id的险种信息");
+                return Result.error("查询失败");
+            }
+        } catch (Exception e) {
+            log.error("查询险种失败,失败原因为:" + e);
             return Result.error("查询失败");
         }
     }
 
     /**
      * 根据id修改险种信息
+     *
      * @param insuranceProductReqDTO
      * @return
      */
-    @PutMapping("/updateInsuranceCompanyById")
-    public Result updateInsuranceCompanyById(@RequestBody InsuranceProductReqDTO insuranceProductReqDTO){
-        Boolean result = insuranceProductService.updateInsuranceProductById(insuranceProductReqDTO);
-        if(result){
+    @PutMapping("/updateInsuranceProductById/{id}")
+    public Result updateInsuranceProductById(@PathVariable Long id, @RequestBody InsuranceProductReqDTO insuranceProductReqDTO) {
+        try {
+            if (insuranceProductReqDTO == null) {
+                log.error("修改险种失败,失败原因为:请求体为空");
+                return Result.error("修改失败");
+            }
+            insuranceProductService.updateInsuranceProductById(id, insuranceProductReqDTO);
             return Result.success();
-        } else {
-            return Result.error("插入失败");
+        } catch (Exception e) {
+            log.error("修改险种失败,失败原因为:" + e);
+            return Result.error("修改失败");
         }
     }
 
     /**
      * 根据id逻辑删除险种信息
+     *
      * @param id
      * @return
      */
-    @DeleteMapping("/deleteInsuranceCompanyById/{id}")
-    public Result deleteInsuranceCompanyById(@PathVariable Long id){
-        Boolean result = insuranceProductService.deleteInsuranceProductById(id);
-        if(result){
-            return Result.success();
-        } else {
-            return Result.error("插入失败");
+    @DeleteMapping("/deleteInsuranceProductById/{id}")
+    public Result deleteInsuranceProductById(@PathVariable Long id) {
+        try {
+            insuranceProductService.deleteInsuranceProductById(id);
+                return Result.success();
+        } catch (Exception e) {
+            log.error("删除险种失败,失败原因为:" + e);
+            return Result.error("删除失败");
         }
     }
+
 }

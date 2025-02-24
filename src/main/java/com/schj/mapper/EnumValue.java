@@ -10,6 +10,6 @@ import org.apache.ibatis.annotations.Select;
  */
 @Mapper
 public interface EnumValue {
-    @Select("select enum_name from enum_value where enum_code = #{companyType}")
-    String getEnumByCode(String companyType);
+    @Select("select enum_name from enum_value where enum_code = #{enum_code}")
+    String getEnumByCode(String enum_code);
 }

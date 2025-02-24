@@ -38,7 +38,14 @@
     </insert>
 
     <update id="updateInsuranceProductById">
-
+        update insurance_product
+        set
+            product_code = #{productCode},
+            product_name = #{productName},
+            product_category = #{productCategory},
+            duration_type = #{durationType},
+            product_status = #{productStatus}
+        where id = #{id}
     </update>
 
     <update id="deleteInsuranceProductById">
