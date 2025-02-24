@@ -24,12 +24,6 @@ public class InsurancePolicy {
     @ExcelProperty("保险公司名称")
     private String companyName;
 
-    @ExcelProperty("险种代码")
-    private String productCode;
-
-    @ExcelProperty("险种名称")
-    private String productName;
-
     @ExcelProperty("保单状态")
     private String policyStatus;
 

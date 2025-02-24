@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.schj.mapper.ProductPolicyMapper">
+
+    <resultMap id="ProductPolicyMapper" type="com.schj.pojo.po.ProductPolicy">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+
+        <result property="productId" column="product_id" jdbcType="BIGINT"/>
+        <result property="policyId" column="policy_name" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <insert id="insertProductPolicy">
+        insert into product_policy
+        (id, product_id, policy_id)
+        value
+        (#{id},#{productId},#{policyId})
+
+    </insert>
+</mapper>

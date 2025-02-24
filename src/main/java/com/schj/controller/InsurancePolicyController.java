@@ -105,8 +105,15 @@ public class InsurancePolicyController {
 
     @GetMapping("/search")
     public Result searchPolicies(@RequestParam PolicyQueryRequest policyQueryRequest) {
-        PageBean pageBean = insurancePolicyService.getPoliciesByCondition(policyQueryRequest);
-        return Result.success(pageBean);
+        try {
+            if(policyQueryRequest == null){
+                return Result.error("请求体不能为空");
+            }
+            PageBean pageBean = insurancePolicyService.getPoliciesByCondition(policyQueryRequest);
+            return Result.success(pageBean);
+        } catch (Exception e){
+            log.error("分页查询保险单时出错: " + e.getMessage());
+            return Result.error("分页查询保险单失败");
+        }
     }
-
 }

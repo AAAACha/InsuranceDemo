@@ -6,6 +6,7 @@ import com.github.pagehelper.PageHelper;
 import com.schj.mapper.CustomerInfoMapper;
 import com.schj.mapper.InsurancePolicyMapper;
 import com.schj.mapper.InsuranceProductMapper;
+import com.schj.mapper.ProductPolicyMapper;
 import com.schj.pojo.dto.request.InsurancePolicyReqDTO;
 import com.schj.pojo.dto.request.PolicyQueryRequest;
 import com.schj.pojo.dto.response.InsurancePolicyResDTO;
@@ -36,6 +37,9 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
     @Autowired
     InsuranceProductMapper insuranceProductMapper;
 
+    @Autowired
+    ProductPolicyMapper productPolicyMapper;
+
     @Override
     public void insertInsurancePolicy(InsurancePolicyReqDTO insurancePolicyReqDTO) {
 
@@ -44,6 +48,7 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
 
         InsurancePolicy insurancePolicy = BeanUtil.toBean(insurancePolicyReqDTO, InsurancePolicy.class);
 
+        insurancePolicy.setId(id);
         insurancePolicy.setCreator("admin");
         insurancePolicy.setCreatedTime(LocalDateTime.now());
         insurancePolicy.setUpdater("admin");
@@ -51,31 +56,34 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
 
         insurancePolicyMapper.insertInsurancePolicy(insurancePolicy);
 
+        List<Long> productIdList = insurancePolicyReqDTO.getProductIdList();
+
+        for (Long l : productIdList) {
+            ProductPolicy productPolicy = new ProductPolicy();
+            long productPolicyId = snowflakeIdWorker.nextId();
+            productPolicy.setId(productPolicyId);
+            productPolicy.setPolicyId(id);
+            productPolicy.setProductId(l);
+
+            productPolicyMapper.insertProductPolicy(productPolicy);
+        }
+
         //获得被保人客户列表
-        List<CustomerInfo> insuredList = insurancePolicyReqDTO.getInsuredList();
-        //获得投保人客户列表
-        List<CustomerInfo> policyholderList = insurancePolicyReqDTO.getPolicyholderList();
-        //获得受保人客户列表
-        List<CustomerInfo> beneficiaryList = insurancePolicyReqDTO.getBeneficiaryList();
+        List<CustomerInfo> customerInfoList = insurancePolicyReqDTO.getCosutomerInfoList();
 
-        for (CustomerInfo customerInfo : insuredList) {
-            customerInfoMapper.insertCustomerInfoService(customerInfo);
-        }
+        int beneficiaryRate = 0;
 
-        for (CustomerInfo customerInfo : policyholderList) {
-            customerInfoMapper.insertCustomerInfoService(customerInfo);
-        }
-
-        int benefitRatio = 0;
-        for (CustomerInfo customerInfo : beneficiaryList) {
-            benefitRatio += customerInfo.getBenefitRatio();
-        }
-        if(benefitRatio == 100){
-            for (CustomerInfo customerInfo : beneficiaryList) {
-                customerInfoMapper.insertCustomerInfoService(customerInfo);
+        for (CustomerInfo customerInfo : customerInfoList) {
+            if(customerInfo.getCustomerType().equals("S")){
+                beneficiaryRate += customerInfo.getBenefitRatio();
             }
         }
 
+        if(beneficiaryRate == 100){
+            for (CustomerInfo customerInfo : customerInfoList) {
+                customerInfoMapper.insertCustomerInfoService(customerInfo);
+            }
+        }
     }
 
     /**
