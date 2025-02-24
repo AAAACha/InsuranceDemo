@@ -30,7 +30,7 @@ public class InsuranceCompanyServiceImpl implements InsuranceCompanyService {
     SnowflakeIdWorker snowflakeIdWorker = new SnowflakeIdWorker(1);
 
     @Override
-    public Boolean insertInsuranceCompany(InsuranceCompanyReqDTO insuranceCompanyReqDTO) {
+    public void insertInsuranceCompany(InsuranceCompanyReqDTO insuranceCompanyReqDTO) {
 
         InsuranceCompany insuranceCompany = new InsuranceCompany();
 
@@ -41,7 +41,7 @@ public class InsuranceCompanyServiceImpl implements InsuranceCompanyService {
         insuranceCompany.setCompanyName(insuranceCompanyReqDTO.getCompanyName());
 
         String CompanyType = enumValue.getEnumByCode(insuranceCompanyReqDTO.getCompanyType());
-        if(BeanUtil.isNotEmpty(CompanyType)){
+        if (BeanUtil.isNotEmpty(CompanyType)) {
             insuranceCompany.setCompanyType(CompanyType);
         } else {
             throw new RuntimeException("您输入的公司类型不存在");
@@ -53,9 +53,7 @@ public class InsuranceCompanyServiceImpl implements InsuranceCompanyService {
         insuranceCompany.setUpdatedTime(LocalDateTime.now());
         insuranceCompany.setIsDeleted(0);
 
-        Boolean result =  insuranceCompanyMapper.insertInsuranceCompany(insuranceCompany);
-
-        return result;
+        insuranceCompanyMapper.insertInsuranceCompany(insuranceCompany);
     }
 
     @Override
@@ -69,7 +67,7 @@ public class InsuranceCompanyServiceImpl implements InsuranceCompanyService {
     }
 
     @Override
-    public Boolean updateInsuranceCompanyById(Long id, InsuranceCompanyReqDTO insuranceCompanyReqDTO) {
+    public void updateInsuranceCompanyById(Long id, InsuranceCompanyReqDTO insuranceCompanyReqDTO) {
 
         InsuranceCompany insuranceCompany = BeanUtil.toBean(insuranceCompanyReqDTO, InsuranceCompany.class);
 
@@ -77,11 +75,18 @@ public class InsuranceCompanyServiceImpl implements InsuranceCompanyService {
         insuranceCompany.setUpdater("admin");
         insuranceCompany.setUpdatedTime(LocalDateTime.now());
 
-        return insuranceCompanyMapper.updateInsuranceCompanyById(insuranceCompany);
+        String CompanyType = enumValue.getEnumByCode(insuranceCompanyReqDTO.getCompanyType());
+        if (BeanUtil.isNotEmpty(CompanyType)) {
+            insuranceCompany.setCompanyType(CompanyType);
+        } else {
+            throw new RuntimeException("您输入的公司类型不存在");
+        }
+
+        insuranceCompanyMapper.updateInsuranceCompanyById(insuranceCompany);
     }
 
     @Override
-    public Boolean deleteInsuranceCompanyById(Long id) {
-        return insuranceCompanyMapper.deleteInsuranceCompanyById(id);
+    public void deleteInsuranceCompanyById(Long id) {
+        insuranceCompanyMapper.deleteInsuranceCompanyById(id);
     }
 }
