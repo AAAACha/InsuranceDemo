@@ -49,10 +49,10 @@ public interface CustomerInfoMapper{
 
     /**
      * 根据保单id查找客户信息
-     * @param id
+     * @param
      * @return
      */
-    List<CustomerInfo> getCustomerInfoByPolicyId(Long id);
+    List<CustomerInfo> getCustomerInfoByPolicyId(Long policyId);
 
     @Delete("delete from customer_info where policy_id = #{policyId}")
     void deleteCustomerInfo(Long policyId);

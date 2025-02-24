@@ -68,7 +68,8 @@
             resultMap="customerInfoResultMap">
         select *
         from customer_info
-        where id = #{id}
+        where id = #{policyId}
+        and is_deleted = 0
     </select>
 
     <select id="getCustomerInfoByPolicyId"
@@ -76,5 +77,6 @@
         select *
         from customer_info
         where policy_id = #{id}
+        and is_deleted = 0
     </select>
 </mapper>
