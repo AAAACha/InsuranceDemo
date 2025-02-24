@@ -104,7 +104,7 @@ public class InsurancePolicyController {
     }
 
     @GetMapping("/search")
-    public Result searchPolicies(@RequestParam PolicyQueryRequest policyQueryRequest) {
+    public Result searchPolicies(@RequestBody PolicyQueryRequest policyQueryRequest) {
         try {
             if(policyQueryRequest == null){
                 return Result.error("请求体不能为空");

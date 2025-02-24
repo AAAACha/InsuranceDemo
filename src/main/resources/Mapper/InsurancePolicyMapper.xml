@@ -116,26 +116,26 @@
             parameterType="com.schj.pojo.dto.request.PolicyQueryRequest">
         SELECT * FROM insurance_policy
         <where>
-            <if test="policyNo != null and query.policyNo != ''">
-                and policy_no = #{query.policyNo}
+            <if test="policyNo != null and policyNo != ''">
+                and policy_no = #{policyNo}
             </if>
-            <if test="companyName != null and query.companyName != ''">
-                and company_name LIKE CONCAT('%', #{query.companyName}, '%')
+            <if test="companyName != null and companyName != ''">
+                and company_name LIKE CONCAT('%', #{companyName}, '%')
             </if>
-            <if test="productName != null and query.productName != ''">
-                and product_name LIKE CONCAT('%', #{query.productName}, '%')
+            <if test="productName != null and productName != ''">
+                and product_name LIKE CONCAT('%', #{productName}, '%')
             </if>
             <if test="startApplicationTime != null">
-                and application_time &gt;= #{query.startApplicationTime}
+                and application_time &gt;= #{startApplicationTime}
             </if>
             <if test="endApplicationTime != null">
-                and application_time &lt;= #{query.endApplicationTime}
+                and application_time &lt;= #{endApplicationTime}
             </if>
-            <if test="query.startEffectiveTime != null">
-                effective_time &gt;= #{query.startEffectiveTime}
+            <if test="startEffectiveTime != null">
+                and effective_time &gt;= #{startEffectiveTime}
             </if>
-            <if test="query.endEffectiveTime != null">
-                effective_time &lt;= #{query.endEffectiveTime}
+            <if test="endEffectiveTime != null">
+                and effective_time &lt;= #{endEffectiveTime}
             </if>
         </where>
     </select>
