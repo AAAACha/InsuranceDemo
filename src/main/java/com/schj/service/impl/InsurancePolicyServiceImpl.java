@@ -15,6 +15,7 @@ import com.schj.service.InsurancePolicyService;
 import com.schj.utils.SnowflakeIdWorker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
     ProductPolicyMapper productPolicyMapper;
 
     @Override
+    @Transactional()
     public void insertInsurancePolicy(InsurancePolicyReqDTO insurancePolicyReqDTO) {
 
         SnowflakeIdWorker snowflakeIdWorker = new SnowflakeIdWorker(1);
@@ -53,6 +55,7 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
         insurancePolicy.setCreatedTime(LocalDateTime.now());
         insurancePolicy.setUpdater("admin");
         insurancePolicy.setUpdatedTime(LocalDateTime.now());
+        insurancePolicy.setIsDeleted(0);
 
         insurancePolicyMapper.insertInsurancePolicy(insurancePolicy);
 
@@ -69,7 +72,7 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
         }
 
         //获得被保人客户列表
-        List<CustomerInfo> customerInfoList = insurancePolicyReqDTO.getCosutomerInfoList();
+        List<CustomerInfo> customerInfoList = insurancePolicyReqDTO.getCustomerInfoList();
 
         int beneficiaryRate = 0;
 
@@ -81,6 +84,11 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
 
         if(beneficiaryRate == 100){
             for (CustomerInfo customerInfo : customerInfoList) {
+                customerInfo.setCreator("admin");
+                customerInfo.setCreatedTime(LocalDateTime.now());
+                customerInfo.setUpdater("admin");
+                customerInfo.setUpdatedTime(LocalDateTime.now());
+                customerInfo.setIsDeleted(0);
                 customerInfoMapper.insertCustomerInfoService(customerInfo);
             }
         }

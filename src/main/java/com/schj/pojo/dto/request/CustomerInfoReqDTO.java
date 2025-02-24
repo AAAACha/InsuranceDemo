@@ -27,4 +27,5 @@ public class CustomerInfoReqDTO {
     private String contactAddress;
 
     private Integer benefitRatio;
+
 }

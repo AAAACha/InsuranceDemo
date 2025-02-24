@@ -13,10 +13,10 @@ public class InsurancePolicy {
     private Long id;
 
     @ExcelProperty("保单号")
-    private String policyNo;
+    private Long policyNo;
 
     @ExcelProperty("投保单号")
-    private String proposalNo;
+    private Long proposalNo;
 
     @ExcelProperty("保险公司编码")
     private String companyCode;
