@@ -3,6 +3,7 @@ package com.schj.mapper;
 
 import com.schj.pojo.po.InsuranceProduct;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 /**
  * @author AvA
@@ -18,4 +19,7 @@ public interface InsuranceProductMapper{
     Boolean updateInsuranceProductById(InsuranceProduct insuranceProduct);
 
     Boolean deleteInsuranceProductById(Long id);
+
+    @Select("select product_name from insurance_product where id = #{id}")
+    String getInsuranceProductNameById(Long id);
 }

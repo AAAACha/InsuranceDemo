@@ -52,7 +52,7 @@ public interface CustomerInfoMapper{
      * @param id
      * @return
      */
-    List<Long> getCustomerInfoByPolicyId(Long id);
+    List<CustomerInfo> getCustomerInfoByPolicyId(Long id);
 
     @Delete("delete from customer_info where policy_id = #{policyId}")
     void deleteCustomerInfo(Long policyId);

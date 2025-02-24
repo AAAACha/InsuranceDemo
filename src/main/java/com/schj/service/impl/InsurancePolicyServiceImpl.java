@@ -174,20 +174,13 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
         InsurancePolicyResDTO result = BeanUtil.toBean(insurancePolicy, InsurancePolicyResDTO.class);
 
         // 获取与保险单关联的客户ID列表
-        List<Long> CustomerIdList = customerInfoMapper.getCustomerInfoByPolicyId(id);
+        List<CustomerInfo> customerInfoList = customerInfoMapper.getCustomerInfoByPolicyId(id);
 
         // 获取与保险单关联的险种ID列表
         List<Long> insuranceProductIdList = productPolicyMapper.getProductIdListByPolicyId(id);
 
         // 初始化客户信息列表和险种列表
-        List<CustomerInfo> customerInfoList = new ArrayList<>();
         List<InsuranceProduct> insuranceProductList = new ArrayList<>();
-
-        // 遍历客户ID列表，获取每个客户的详细信息
-        for (Long i : CustomerIdList) {
-            CustomerInfo customerInfo = customerInfoMapper.getCustomerInfoById(i);
-            customerInfoList.add(customerInfo);
-        }
 
         // 遍历险种ID列表，获取每个险种的详细信息
         for (Long i : insuranceProductIdList) {
