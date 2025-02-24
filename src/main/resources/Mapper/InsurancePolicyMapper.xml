@@ -23,6 +23,7 @@
         <result column="premium" property="premium" jdbcType="DECIMAL"/>
         <result column="insured_amount" property="insuredAmount" jdbcType="DECIMAL"/>
 
+        <result column="beneficiary_type" property="beneficiaryType" jdbcType="VARCHAR"/>
         <!-- 缴费信息 -->
         <result column="payment_years" property="paymentYears" jdbcType="INTEGER"/>
         <result column="payment_method" property="paymentMethod" jdbcType="VARCHAR"/>
@@ -50,6 +51,7 @@
                                       effective_time,
                                       premium,
                                       insured_amount,
+                                      beneficiary_type,
                                       payment_years,
                                       payment_method,
                                       payment_times,
@@ -59,26 +61,49 @@
                                       updated_time,
                                       updater,
                                       is_deleted)
-        value (#{id},
-                #{policyNo},
-                #{proposalNo},
-                #{companyCode},
-                #{companyName},
-                #{policyStatus},
-                #{applicationTime},
-                #{effectiveTime},
-                #{premium},
-                #{insuredAmount},
-                #{paymentYears},
-                #{paymentMethod},
-                #{paymentTimes},
-                #{coveragePeriod},
-                #{createdTime},
-                #{creator},
-                #{updatedTime},
-                #{updater},
-                #{isDeleted})
+            value (#{id},
+                   #{policyNo},
+                   #{proposalNo},
+                   #{companyCode},
+                   #{companyName},
+                   #{policyStatus},
+                   #{applicationTime},
+                   #{effectiveTime},
+                   #{premium},
+                   #{insuredAmount},
+                   #{beneficiaryType},
+                   #{paymentYears},
+                   #{paymentMethod},
+                   #{paymentTimes},
+                   #{coveragePeriod},
+                   #{createdTime},
+                   #{creator},
+                   #{updatedTime},
+                   #{updater},
+                   #{isDeleted})
     </insert>
+    <update id="updateInsurancePolicyById">
+        update insurance_policy
+        set
+            policy_no = #{policyNo},
+            proposal_no = #{proposalNo},
+            company_code = #{companyCode},
+            company_name = #{companyName},
+            policy_status = #{policyStatus},
+            application_time = #{applicationTime},
+            effective_time = #{effectiveTime},
+            premium = #{premium},
+            insured_amount = #{insuredAmount},
+            beneficiary_type = #{beneficiaryType},
+            payment_years = #{paymentYears},
+            payment_method = #{paymentMethod},
+            payment_times = #{paymentTimes},
+            coverage_period = #{coveragePeriod},
+            updated_time = #{updatedTime},
+            updater = #{updater}
+        where id = #{id}
+          and is_deleted = 0
+    </update>
     <select id="getInsurancePolicyList"
             resultMap="InsurancePolicyResultMap">
         select *
@@ -113,5 +138,11 @@
                 effective_time &lt;= #{query.endEffectiveTime}
             </if>
         </where>
+    </select>
+    <select id="getInsurancePolicyById"
+            resultMap="InsurancePolicyResultMap">
+        select *
+        from insurance_policy
+        where id = #{id}
     </select>
 </mapper>

@@ -17,6 +17,5 @@
         (id, product_id, policy_id)
         value
         (#{id},#{productId},#{policyId})
-
     </insert>
 </mapper>

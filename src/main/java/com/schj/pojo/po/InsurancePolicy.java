@@ -36,8 +36,10 @@ public class InsurancePolicy {
     @ExcelProperty("保费")
     private BigDecimal premium;
 
-    @ExcelProperty("保险额")
+    @ExcelProperty("保额")
     private BigDecimal insuredAmount;
+
+    private String beneficiaryType;
 
     @ExcelProperty("缴费年限")
     private Integer paymentYears;

@@ -35,6 +35,8 @@ public class InsurancePolicyResDTO {
 
     private BigDecimal insuredAmount;
 
+    private String beneficiaryType;
+
     private Integer paymentYears;
 
     private String paymentMethod;

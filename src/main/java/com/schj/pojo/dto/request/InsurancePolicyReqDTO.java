@@ -79,6 +79,11 @@ public class InsurancePolicyReqDTO {
     private BigDecimal insuredAmount;
 
     /**
+     * 受益人类型(法定/指定)
+     */
+    private String beneficiaryType;
+
+    /**
      * 缴费年数
      * 描述客户需要缴纳保费的年限
      */

@@ -1,6 +1,7 @@
 package com.schj.mapper;
 
 import com.schj.pojo.po.CustomerInfo;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -52,4 +53,7 @@ public interface CustomerInfoMapper{
      * @return
      */
     List<Long> getCustomerInfoByPolicyId(Long id);
+
+    @Delete("delete from customer_info where policy_id = #{policyId}")
+    void deleteCustomerInfo(Long policyId);
 }
