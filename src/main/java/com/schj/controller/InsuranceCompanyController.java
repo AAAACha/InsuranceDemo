@@ -38,7 +38,7 @@ public class InsuranceCompanyController {
             return Result.success();
         } catch (Exception e) {
             log.error("新增公司失败,失败原因:" + e);
-            return Result.error("插入失败");
+            return Result.error("插入失败,失败原因:" + e.getMessage());
         }
     }
 
@@ -54,18 +54,18 @@ public class InsuranceCompanyController {
         try {
             if (id == null) {
                 log.error("查询公司失败,失败原因:id为空");
-                return Result.error("id不得为空");
+                return Result.error("您查询的保司不存在");
             }
             InsuranceCompanyResDTO result = insuranceCompanyService.getInsuranceCompanyById(id);
             if (result != null) {
                 return Result.success(result);
             } else {
-                log.error("查询公司失败");
-                return Result.error("查询失败");
+                log.error("查询保司失败");
+                return Result.error("您查询的保司不存在");
             }
         } catch (Exception e) {
-            log.error("查询公司失败,失败原因:" + e);
-            return Result.error("查询失败");
+            log.error("查询保司失败,失败原因:" + e);
+            return Result.error("查询失败,失败原因:" + e.getMessage());
         }
     }
 
@@ -81,13 +81,13 @@ public class InsuranceCompanyController {
         try {
             if (id == null && insuranceCompanyReqDTO == null) {
                 log.error("修改公司失败,失败原因:请求体为空");
-                return Result.error("请求体不得为空");
+                return Result.error("修改失败,请检查您录入的信息");
             }
             insuranceCompanyService.updateInsuranceCompanyById(id, insuranceCompanyReqDTO);
             return Result.success();
         } catch (Exception e) {
             log.error("修改公司失败,失败原因:" + e);
-            return Result.error("修改失败");
+            return Result.error("修改失败,失败原因:" + e.getMessage());
         }
     }
 
@@ -102,13 +102,13 @@ public class InsuranceCompanyController {
         try {
             if (id == null) {
                 log.error("删除公司失败,失败原因:id为空");
-                return Result.error("id不得为空");
+                return Result.error("您删除的保司不存在");
             }
             insuranceCompanyService.deleteInsuranceCompanyById(id);
             return Result.success();
         } catch (Exception e) {
             log.error("删除公司失败,失败原因:" + e);
-            return Result.error("删除失败");
+            return Result.error("删除失败,失败原因:" + e.getMessage());
         }
     }
 }

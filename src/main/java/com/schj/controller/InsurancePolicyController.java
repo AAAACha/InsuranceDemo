@@ -32,13 +32,14 @@ public class InsurancePolicyController {
     public Result insertInsurancePolicy(@RequestBody InsurancePolicyReqDTO insurancePolicyReqDTO){
         try {
             if (insurancePolicyReqDTO == null) {
-                return Result.error("请求体不能为空");
+                log.error("插入失败,请求体不能为空");
+                return Result.error("新增失败,请检查您录入的信息");
             }
             insurancePolicyService.insertInsurancePolicy(insurancePolicyReqDTO);
             return Result.success();
         } catch (Exception e) {
             log.error("插入保险单时出错: " + e.getMessage());
-            return Result.error("插入保险单失败");
+            return Result.error("新增保险单失败,失败原因:" + e.getMessage());
         }
     }
 
@@ -51,16 +52,18 @@ public class InsurancePolicyController {
     public Result getInsurancePolicyById(@PathVariable Long id){
         try {
             if (id == null) {
-                return Result.error("ID不能为空");
+                log.error("ID不能为空");
+                return Result.error("查询失败, 您查询的保单不存在");
             }
             InsurancePolicyResDTO insurancePolicyResDTO = insurancePolicyService.getInsurancePolicyById(id);
             if (insurancePolicyResDTO == null) {
-                return Result.error("未找到保险单");
+                log.error("查询失败");
+                return Result.error("查询失败,未找到您要查询的保险单");
             }
             return Result.success(insurancePolicyResDTO);
         } catch (Exception e) {
             log.error("根据ID获取保险单时出错: " + e.getMessage());
-            return Result.error("获取保险单失败");
+            return Result.error("查询失败,失败原因:" + e.getMessage());
         }
     }
 
@@ -74,13 +77,14 @@ public class InsurancePolicyController {
     public Result updateInsurancePolicyById(@PathVariable Long id, @RequestBody InsurancePolicyReqDTO insurancePolicyReqDTO){
         try {
             if (id == null || insurancePolicyReqDTO == null) {
-                return Result.error("ID和请求体不能为空");
+                log.error("修改失败,失败原因:ID和请求体不能为空");
+                return Result.error("修改失败,请检查您录入的信息");
             }
             insurancePolicyService.updateInsurancePolicyById(id, insurancePolicyReqDTO);
             return Result.success();
         } catch (Exception e) {
             log.error("更新保险单时出错: " + e.getMessage());
-            return Result.error("更新保险单失败");
+            return Result.error("更新保险单失败,失败原因:" + e.getMessage());
         }
     }
 
@@ -93,13 +97,14 @@ public class InsurancePolicyController {
     public Result deleteInsurancePolicyById(@PathVariable Long id){
         try {
             if (id == null) {
-                return Result.error("ID不能为空");
+                log.error("删除失败,失败原因:ID不能为空");
+                return Result.error("删除失败,您要删除的保单不存在");
             }
             insurancePolicyService.deleteInsurancePolicyById(id);
             return Result.success();
         } catch (Exception e) {
             log.error("删除保险单时出错: " + e.getMessage());
-            return Result.error("删除保险单失败");
+            return Result.error("删除保险单失败,失败原因:"+e.getMessage());
         }
     }
 
@@ -112,13 +117,14 @@ public class InsurancePolicyController {
     public Result searchPolicies(@RequestBody PolicyQueryRequest policyQueryRequest) {
         try {
             if(policyQueryRequest == null){
-                return Result.error("请求体不能为空");
+                log.error("分页查询失败, 失败原因: 请求体不为空");
+                return Result.error("查询失败,请检查您的查询条件");
             }
             PageBean pageBean = insurancePolicyService.getPoliciesByCondition(policyQueryRequest);
             return Result.success(pageBean);
         } catch (Exception e){
             log.error("分页查询保险单时出错: " + e.getMessage());
-            return Result.error("分页查询保险单失败");
+            return Result.error("分页查询保险单失败,失败原因:"+e.getMessage());
         }
     }
 }

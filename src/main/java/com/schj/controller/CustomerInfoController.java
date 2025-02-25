@@ -35,11 +35,11 @@ public class CustomerInfoController {
                 return Result.success();
             } else {
                 log.error("新增客户信息失败, 失败原因:请求体为空");
-                return Result.error("新增客户信息失败");
+                return Result.error("新增客户信息失败,请检查录入的信息");
             }
         } catch (Exception e) {
             log.error("新增客户信息失败, 失败原因:" + e);
-            return Result.error("新增客户信息失败");
+            return Result.error("新增客户信息失败" + e.getMessage());
         }
     }
 
@@ -57,11 +57,11 @@ public class CustomerInfoController {
                     return Result.success(result);
             } else {
                 log.error("查询客户信息失败, 失败原因:id为空");
-                return Result.error("不能查询id为空的客户信息");
+                return Result.error("您查询的客户信息不存在");
             }
         } catch (Exception e) {
             log.error("查询客户信息失败, 失败原因:"+e);
-            return Result.error("查询用户信息失败");
+            return Result.error("查询用户信息失败" + e.getMessage());
         }
     }
 
@@ -80,11 +80,11 @@ public class CustomerInfoController {
                 return Result.success();
             } else {
                 log.error("修改客户信息失败, 失败原因:请求体为空");
-                return Result.error("不能修改请求体为空的客户信息");
+                return Result.error("修改失败,请检查您录入的客户信息");
             }
         } catch (Exception e) {
             log.error("修改客户信息失败, 失败原因:"+e);
-            return Result.error("修改用户信息失败");
+            return Result.error("修改用户信息失败" + e.getMessage());
         }
     }
 
@@ -102,11 +102,11 @@ public class CustomerInfoController {
                 return Result.success();
             } else {
                 log.error("删除客户信息失败, 失败原因:id为空");
-                return Result.error("不能删除id为空的客户信息");
+                return Result.error("您删除的客户信息不存在");
             }
         } catch (Exception e) {
             log.error("删除客户信息失败, 失败原因:"+e);
-            return Result.error("删除用户信息失败");
+            return Result.error("删除用户信息失败" + e.getMessage());
         }
     }
 }

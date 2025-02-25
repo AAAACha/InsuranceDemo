@@ -32,13 +32,13 @@ public class InsuranceProductController {
         try {
             if (insuranceProductReqDTO == null) {
                 log.error("新增险种失败,失败原因为:请求体为空");
-                return Result.error("新增失败");
+                return Result.error("新增失败,请检查您录入的信息");
             }
             insuranceProductService.insertInsuranceProduct(insuranceProductReqDTO);
             return Result.success();
         } catch (Exception e) {
-            log.error("新增险种失败,失败原因为:" + e);
-            return Result.error("插入失败");
+            log.error("新增险种失败,失败原因:" + e);
+            return Result.error("插入失败,失败原因:" + e.getMessage());
         }
     }
 
@@ -56,11 +56,11 @@ public class InsuranceProductController {
                 return Result.success(result);
             } else {
                 log.error("查询险种失败,失败原因为:未找到对应id的险种信息");
-                return Result.error("查询失败");
+                return Result.error("查询失败,您查询的险种不存在");
             }
         } catch (Exception e) {
             log.error("查询险种失败,失败原因为:" + e);
-            return Result.error("查询失败");
+            return Result.error("查询失败,失败原因:" + e.getMessage());
         }
     }
 
@@ -75,13 +75,13 @@ public class InsuranceProductController {
         try {
             if (insuranceProductReqDTO == null) {
                 log.error("修改险种失败,失败原因为:请求体为空");
-                return Result.error("修改失败");
+                return Result.error("修改失败,请检查您录入的信息");
             }
             insuranceProductService.updateInsuranceProductById(id, insuranceProductReqDTO);
             return Result.success();
         } catch (Exception e) {
             log.error("修改险种失败,失败原因为:" + e);
-            return Result.error("修改失败");
+            return Result.error("修改失败,失败原因:" + e.getMessage());
         }
     }
 
@@ -94,11 +94,15 @@ public class InsuranceProductController {
     @DeleteMapping("/deleteInsuranceProductById/{id}")
     public Result deleteInsuranceProductById(@PathVariable Long id) {
         try {
+            if(id == null){
+                log.error("删除险种失败,失败原因为:id为空");
+                return Result.error("删除失败,您删除的险种信息不存在");
+            }
             insuranceProductService.deleteInsuranceProductById(id);
                 return Result.success();
         } catch (Exception e) {
             log.error("删除险种失败,失败原因为:" + e);
-            return Result.error("删除失败");
+            return Result.error("删除失败,失败原因:" + e.getMessage());
         }
     }
 
