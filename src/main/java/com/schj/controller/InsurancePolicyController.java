@@ -103,6 +103,11 @@ public class InsurancePolicyController {
         }
     }
 
+    /**
+     * 保单信息分页查询
+     * @param policyQueryRequest
+     * @return
+     */
     @GetMapping("/search")
     public Result searchPolicies(@RequestBody PolicyQueryRequest policyQueryRequest) {
         try {

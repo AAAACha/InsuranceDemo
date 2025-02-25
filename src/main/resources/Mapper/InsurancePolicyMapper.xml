@@ -11,8 +11,10 @@
         <!-- 核心业务字段 -->
         <result column="policy_no" property="policyNo" jdbcType="VARCHAR"/>
         <result column="proposal_no" property="proposalNo" jdbcType="VARCHAR"/>
-        <result column="company_code" property="companyCode" jdbcType="CHAR"/>
+        <result column="company_code" property="companyCode" jdbcType="INTEGER"/>
         <result column="company_name" property="companyName" jdbcType="VARCHAR"/>
+        <result column="product_code" property="productCode" jdbcType="INTEGER"/>
+        <result column="product_name" property="productName" jdbcType="VARCHAR"/>
 
         <!-- 状态与时间相关 -->
         <result column="policy_status" property="policyStatus" jdbcType="VARCHAR"/>
@@ -46,6 +48,8 @@
                                       proposal_no,
                                       company_code,
                                       company_name,
+                                      product_code,
+                                      product_name,
                                       policy_status,
                                       application_time,
                                       effective_time,
@@ -66,6 +70,8 @@
                    #{proposalNo},
                    #{companyCode},
                    #{companyName},
+                   #{productCode},
+                   #{productName},
                    #{policyStatus},
                    #{applicationTime},
                    #{effectiveTime},

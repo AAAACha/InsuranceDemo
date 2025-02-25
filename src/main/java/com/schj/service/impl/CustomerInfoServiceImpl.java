@@ -46,14 +46,8 @@ public class CustomerInfoServiceImpl implements CustomerInfoService {
         // 设置客户信息的ID
         customerInfo.setId(id);
 
-        // 根据代码获取证件类型枚举值
-        String idType = enumValue.getEnumByCode(customerInfoReqDTO.getIdType());
-        // 如果证件类型不为空，则设置客户信息的证件类型；否则抛出异常
-        if (BeanUtil.isNotEmpty(idType)) {
-            customerInfo.setIdType(idType);
-        } else {
-            throw new RuntimeException("不存在的证件类型");
-        }
+        //检查证件类型是否合规
+        checkIdType(customerInfoReqDTO);
 
         // 设置创建时间和创建者
         customerInfo.setCreatedTime(LocalDateTime.now());
@@ -83,6 +77,13 @@ public class CustomerInfoServiceImpl implements CustomerInfoService {
         // 将查询到的客户信息转换为响应DTO
         CustomerInfoResDTO customerInfoResDTO = BeanUtil.toBean(customerInfo, CustomerInfoResDTO.class);
 
+        String idType = enumValue.getEnumByCode(customerInfoResDTO.getIdType());
+        if(BeanUtil.isNotEmpty(idType)){
+            customerInfoResDTO.setIdType(idType);
+        } else {
+            throw new RuntimeException("您查询的用户的证件类型不合法");
+        }
+
         // 返回客户信息的响应DTO
         return customerInfoResDTO;
     }
@@ -99,14 +100,8 @@ public class CustomerInfoServiceImpl implements CustomerInfoService {
         // 属性拷贝，将请求DTO转换为客户信息对象
         CustomerInfo customerInfo = BeanUtil.toBean(customerInfoReqDTO, CustomerInfo.class);
 
-        // 根据代码获取证件类型枚举值
-        String idType = enumValue.getEnumByCode(customerInfoReqDTO.getIdType());
-        // 如果证件类型不为空，则设置客户信息的证件类型；否则抛出异常
-        if (BeanUtil.isNotEmpty(idType)) {
-            customerInfo.setIdType(idType);
-        } else {
-            throw new RuntimeException("不存在的证件类型");
-        }
+        //检查证件类型是否合规
+        checkIdType(customerInfoReqDTO);
 
         // 字段填充，设置ID、更新者和更新时间
         customerInfo.setId(id);
@@ -128,4 +123,16 @@ public class CustomerInfoServiceImpl implements CustomerInfoService {
         customerInfoMapper.deleteCustomerInfoById(id);
     }
 
+    /**
+     * 检查证件类型是否合规
+     * @param customerInfoReqDTO
+     */
+    private void checkIdType(CustomerInfoReqDTO customerInfoReqDTO){
+        // 根据代码获取证件类型枚举值
+        String idType = enumValue.getEnumByCode(customerInfoReqDTO.getIdType());
+        //判断证件类型是否存在
+        if (BeanUtil.isEmpty(idType)) {
+            throw new RuntimeException("不存在的证件类型");
+        }
+    }
 }

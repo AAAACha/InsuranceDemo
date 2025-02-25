@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class CustomerInfo{
     private Long id;
 
-    private Long policyId;
+    private Long policyNo;
 
     private String customerType;
 

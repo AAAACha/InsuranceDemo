@@ -9,7 +9,7 @@
 
         <id property="id" column="id"/>
 
-        <result property="policyId" column="policy_id"/>
+        <result property="policyNo" column="policy_no"/>
         <result property="customerType" column="customer_type"/>
         <result property="idType" column="id_type"/>
         <result property="idNumber" column="id_number"/>
@@ -27,11 +27,11 @@
 
     <insert id="insertCustomerInfoService">
         insert into customer_info
-        (id,policy_id,customer_type, id_type, id_number, full_name, gender, contact_phone,
+        (id,policy_no,customer_type, id_type, id_number, full_name, gender, contact_phone,
          contact_address, benefit_ratio, created_time, creator, updated_time,
          updater, is_deleted)
             value
-            (#{id}, #{policyId},#{customerType},#{idType}, #{idNumber}, #{fullName}, #{gender},
+            (#{id}, #{policyNo},#{customerType},#{idType}, #{idNumber}, #{fullName}, #{gender},
              #{contactPhone}, #{contactAddress}, #{benefitRatio},
              #{createdTime}, #{creator}, #{updatedTime}, #{updater},
              #{isDeleted})
@@ -58,25 +58,19 @@
         where id = #{id}
     </update>
 
-    <update id="deleteInsurancePolicyByPolicyId">
-        update customer_info
-        set is_deleted = 1
-        where policy_id = #{id}
-    </update>
-
     <select id="getCustomerInfoById"
             resultMap="customerInfoResultMap">
         select *
         from customer_info
-        where id = #{policyId}
+        where id = #{id}
         and is_deleted = 0
     </select>
 
-    <select id="getCustomerInfoByPolicyId"
+    <select id="getCustomerInfoByPolicyNo"
             resultMap="customerInfoResultMap">
         select *
         from customer_info
-        where policy_id = #{id}
+        where policy_no = #{PolicyNo}
         and is_deleted = 0
     </select>
 </mapper>

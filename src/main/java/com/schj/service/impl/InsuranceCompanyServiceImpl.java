@@ -46,13 +46,9 @@ public class InsuranceCompanyServiceImpl implements InsuranceCompanyService {
         insuranceCompany.setCompanyCode(insuranceCompanyReqDTO.getCompanyCode());
         insuranceCompany.setCompanyName(insuranceCompanyReqDTO.getCompanyName());
 
-        // 根据公司类型代码获取公司类型描述
-        String CompanyType = enumValue.getEnumByCode(insuranceCompanyReqDTO.getCompanyType());
-        if (BeanUtil.isNotEmpty(CompanyType)) {
-            insuranceCompany.setCompanyType(CompanyType);
-        } else {
-            throw new RuntimeException("您输入的公司类型不存在");
-        }
+        //判断保司类型是否合规
+        checkCompanyType(insuranceCompanyReqDTO);
+        insuranceCompany.setCompanyType(insuranceCompanyReqDTO.getCompanyType());
 
         // 设置创建者和创建时间等公共字段
         insuranceCompany.setCreator("admin");
@@ -80,6 +76,13 @@ public class InsuranceCompanyServiceImpl implements InsuranceCompanyService {
         // 将保险公司记录转换为响应数据传输对象
         InsuranceCompanyResDTO result = BeanUtil.toBean(insuranceCompany, InsuranceCompanyResDTO.class);
 
+        String companyType = enumValue.getEnumByCode(result.getCompanyType());
+        if(BeanUtil.isNotEmpty(companyType)){
+            result.setCompanyType(companyType);
+        } else {
+            throw new RuntimeException("您查询的保司类型不合法");
+        }
+
         return result;
     }
 
@@ -99,13 +102,9 @@ public class InsuranceCompanyServiceImpl implements InsuranceCompanyService {
         insuranceCompany.setUpdater("admin");
         insuranceCompany.setUpdatedTime(LocalDateTime.now());
 
-        // 更新公司类型描述
-        String CompanyType = enumValue.getEnumByCode(insuranceCompanyReqDTO.getCompanyType());
-        if (BeanUtil.isNotEmpty(CompanyType)) {
-            insuranceCompany.setCompanyType(CompanyType);
-        } else {
-            throw new RuntimeException("您输入的公司类型不存在");
-        }
+        // 判断保司类型是否合规
+        checkCompanyType(insuranceCompanyReqDTO);
+        insuranceCompany.setCompanyType(insuranceCompanyReqDTO.getCompanyType());
 
         // 调用Mapper方法更新保险公司记录
         insuranceCompanyMapper.updateInsuranceCompanyById(insuranceCompany);
@@ -120,5 +119,16 @@ public class InsuranceCompanyServiceImpl implements InsuranceCompanyService {
     public void deleteInsuranceCompanyById(Long id) {
         // 调用Mapper方法删除保险公司记录
         insuranceCompanyMapper.deleteInsuranceCompanyById(id);
+    }
+
+    /**
+     * 判断保司类型是否合规
+     * @param insuranceCompanyReqDTO
+     */
+    private void checkCompanyType(InsuranceCompanyReqDTO insuranceCompanyReqDTO){
+        String CompanyType = enumValue.getEnumByCode(insuranceCompanyReqDTO.getCompanyType());
+        if (BeanUtil.isEmpty(CompanyType)) {
+            throw new RuntimeException("您输入的公司类型不存在");
+        }
     }
 }

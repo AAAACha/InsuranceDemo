@@ -42,18 +42,16 @@ public interface CustomerInfoMapper{
     Boolean deleteCustomerInfoById(Long id);
 
     /**
-     * 根据保单id删除客户信息
-     * @param id
-     */
-    void deleteInsurancePolicyByPolicyId(Long id);
-
-    /**
      * 根据保单id查找客户信息
      * @param
      * @return
      */
-    List<CustomerInfo> getCustomerInfoByPolicyId(Long policyId);
+    List<CustomerInfo> getCustomerInfoByPolicyNo(Long policyNo);
 
-    @Delete("delete from customer_info where policy_id = #{policyId}")
-    void deleteCustomerInfo(Long policyId);
+
+    @Delete("delete from customer_info where policy_no = #{policyNo}")
+    void deleteInsurancePolicyByPolicyNo(Long policyNo);
+
+    @Delete("update customer_info set is_deleted = 1 where policy_no = #{policyNo}")
+    void deleteCustomerInfoByPolicyNo(Long policyNo);
 }

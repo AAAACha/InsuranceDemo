@@ -17,22 +17,20 @@ import java.util.List;
 public class InsurancePolicyReqDTO {
 
     /**
-     * 保险单号码
-     * 用于唯一标识一份保险合同
+     * 险种代码
      */
-    private String policyNo;
+    private  Integer productCode;
 
     /**
-     * 投保单号码
-     * 用于唯一标识一份投保申请
+     * 险种名称
      */
-    private String proposalNo;
+    private String productName;
 
     /**
      * 公司代码
      * 用于标识承保公司的代码
      */
-    private String companyCode;
+    private Integer companyCode;
 
     /**
      * 公司名字
@@ -82,18 +80,6 @@ public class InsurancePolicyReqDTO {
      * 受益人类型(法定/指定)
      */
     private String beneficiaryType;
-
-    /**
-     * 缴费年数
-     * 描述客户需要缴纳保费的年限
-     */
-    private Integer paymentYears;
-
-    /**
-     * 缴费方式
-     * 描述客户缴纳保费的方式，如一次性付清、分期付款等
-     */
-    private String paymentMethod;
 
     /**
      * 缴费次数

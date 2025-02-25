@@ -5,7 +5,6 @@ import com.alibaba.excel.EasyExcel;
 import com.schj.mapper.CustomerInfoMapper;
 import com.schj.mapper.InsurancePolicyMapper;
 import com.schj.mapper.InsuranceProductMapper;
-import com.schj.mapper.ProductPolicyMapper;
 import com.schj.pojo.po.CustomerInfo;
 import com.schj.pojo.po.ExcelExporter;
 import com.schj.pojo.po.InsurancePolicy;
@@ -35,9 +34,6 @@ public class ExcelExporterServiceImpl implements ExcelExporterService {
 
     @Autowired
     private CustomerInfoMapper customerInfoMapper;
-
-    @Autowired
-    private ProductPolicyMapper productPolicyMapper;
 
     @Autowired
     private InsuranceProductMapper insuranceProductMapper;
@@ -78,21 +74,12 @@ public class ExcelExporterServiceImpl implements ExcelExporterService {
 
             ExcelExporter excelExporter = BeanUtil.toBean(insurancePolicy, ExcelExporter.class);
 
-            // 获取与当前保险政策关联的产品ID列表，并将其转换为产品名称字符串
-            List<Long> productIdListByPolicyId = productPolicyMapper.getProductIdListByPolicyId(insurancePolicy.getId());
-            StringBuffer productName = new StringBuffer();
-            for (Long l : productIdListByPolicyId) {
-                productName.append(insuranceProductMapper.getInsuranceProductNameById(l));
-            }
-
-            excelExporter.setProductName(productName.toString());
-
             // 获取与当前保险政策关联的客户信息列表，并根据客户类型分割为投保人、被保险人和受益人
-            List<CustomerInfo> customerInfoList = customerInfoMapper.getCustomerInfoByPolicyId(insurancePolicy.getId());
+            List<CustomerInfo> customerInfoList = customerInfoMapper.getCustomerInfoByPolicyNo(insurancePolicy.getPolicyNo());
 
-            String policyholder = customerInfoList.stream().filter(customer -> "A".equals(customer.getCustomerType())).collect(Collectors.toList()).toString();
-            String insured = customerInfoList.stream().filter(customer -> "B".equals(customer.getCustomerType())).collect(Collectors.toList()).toString();
-            String beneficiary = customerInfoList.stream().filter(customer -> "S".equals(customer.getCustomerType())).collect(Collectors.toList()).toString();
+            String policyholder = customerInfoList.stream().filter(customer -> "A".equals(customer.getCustomerType())).map(CustomerInfo::getFullName).collect(Collectors.toList()).toString().replaceAll("[\\[\\]]", "");
+            String insured = customerInfoList.stream().filter(customer -> "B".equals(customer.getCustomerType())).map(CustomerInfo::getFullName).collect(Collectors.toList()).toString().replaceAll("[\\[\\]]", "");
+            String beneficiary = customerInfoList.stream().filter(customer -> "S".equals(customer.getCustomerType())).map(CustomerInfo::getFullName).collect(Collectors.toList()).toString().replaceAll("[\\[\\]]", "");
 
             //属性设置
             excelExporter.setPolicyholder(policyholder);

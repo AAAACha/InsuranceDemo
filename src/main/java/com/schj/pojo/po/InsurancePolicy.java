@@ -3,6 +3,7 @@ package com.schj.pojo.po;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -14,15 +15,19 @@ public class InsurancePolicy {
 
     private Long proposalNo;
 
-    private String companyCode;
+    private Integer productCode;
+
+    private String productName;
+
+    private Integer companyCode;
 
     private String companyName;
 
     private String policyStatus;
 
-    private LocalDateTime applicationTime;
+    private LocalDate applicationTime;
 
-    private LocalDateTime effectiveTime;
+    private LocalDate effectiveTime;
 
     private BigDecimal premium;
 

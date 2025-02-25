@@ -13,6 +13,8 @@
         <result property="productCategory" column="product_category" jdbcType="VARCHAR"/>
         <result property="durationType" column="duration_type" jdbcType="VARCHAR"/>
         <result property="productStatus" column="product_status" jdbcType="VARCHAR"/>
+        <result property="paymentYears" column="payment_years" jdbcType="INTEGER"/>
+        <result property="paymentMethod" column="payment_method" jdbcType="VARCHAR"/>
 
         <result property="createdTime" column="created_time"
                 jdbcType="TIMESTAMP" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler"/>
@@ -28,11 +30,12 @@
     <insert id="insertInsuranceProduct">
         insert into insurance_product
         (id, product_code, product_name, product_category, duration_type,
-         product_status, created_time, creator,
+         product_status, payment_years, payment_method, created_time, creator,
          updated_time, updater, is_deleted)
             value
             (#{id}, #{productCode}, #{productName}, #{productCategory},
-             #{durationType}, #{productStatus}, #{createdTime}, #{creator}, #{updatedTime},
+             #{durationType}, #{productStatus}, #{paymentYears}, #{paymentMethod}, #{createdTime},
+             #{creator}, #{updatedTime},
              #{updater},
              #{isDeleted})
     </insert>
@@ -44,7 +47,9 @@
             product_name = #{productName},
             product_category = #{productCategory},
             duration_type = #{durationType},
-            product_status = #{productStatus}
+            product_status = #{productStatus},
+            payment_years = #{paymentYears},
+            payment_method = #{paymentMethod}
         where id = #{id}
     </update>
 

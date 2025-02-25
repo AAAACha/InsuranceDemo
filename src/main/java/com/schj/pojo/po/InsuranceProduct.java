@@ -17,13 +17,17 @@ public class InsuranceProduct{
 
     private Long id;
 
-    private String productCode;
+    private Integer productCode;
 
     private String productName;
 
     private String productCategory;
 
     private String durationType;
+
+    private Integer paymentYears;
+
+    private String paymentMethod;
 
     private String productStatus;
 

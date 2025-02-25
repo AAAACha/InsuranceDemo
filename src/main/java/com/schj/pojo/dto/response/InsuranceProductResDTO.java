@@ -24,6 +24,10 @@ public class InsuranceProductResDTO {
 
     private String durationType;
 
+    private Integer paymentYears;
+
+    private String paymentMethod;
+
     private String productStatus;
 
     private LocalDateTime createdTime;

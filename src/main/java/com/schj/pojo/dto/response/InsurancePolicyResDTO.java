@@ -1,7 +1,6 @@
 package com.schj.pojo.dto.response;
 
 import com.schj.pojo.po.CustomerInfo;
-import com.schj.pojo.po.InsuranceProduct;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -21,9 +20,13 @@ public class InsurancePolicyResDTO {
 
     private String proposalNo;
 
-    private String companyCode;
+    private Integer companyCode;
 
-    private String productCode;
+    private String companyName;
+
+    private Integer productCode;
+
+    private String productName;
 
     private String policyStatus;
 
@@ -56,6 +59,4 @@ public class InsurancePolicyResDTO {
     private Integer isDeleted;
 
     private List<CustomerInfo> customerInfoList;
-
-    private List<InsuranceProduct> insuranceProductList;
 }

@@ -30,6 +30,16 @@ public class InsuranceProductReqDTO {
     private String durationType;
 
     /**
+     * 缴费年限
+     */
+    private Integer paymentYears;
+
+    /**
+     * 缴费方式
+     */
+    private String paymentMethod;
+
+    /**
      * 险种状态
      */
     private String productStatus;
