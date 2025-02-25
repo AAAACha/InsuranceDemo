@@ -338,6 +338,7 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
 
         // 遍历产品ID列表，创建并插入产品策略关联信息
         for (Long l : productIdList) {
+            long newId = snowflakeIdWorker.nextId();
 
             //判断insurance_product表中是否存在id为l的数据
             InsuranceProduct product = insuranceProductMapper.getInsuranceProductById(l);
@@ -353,7 +354,7 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
                 throw new RuntimeException("请输入有效状态合规的险种ID");
             }
 
-            insurancePolicy.setId(id);
+            insurancePolicy.setId(newId);
             insurancePolicy.setPolicyNo(policyNo);
             insurancePolicy.setProposalNo(proposalNo);
             insurancePolicy.setProductCode(product.getProductCode());

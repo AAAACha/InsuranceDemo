@@ -3,8 +3,8 @@ package com.schj.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.excel.EasyExcel;
 import com.schj.mapper.CustomerInfoMapper;
+import com.schj.mapper.EnumValue;
 import com.schj.mapper.InsurancePolicyMapper;
-import com.schj.mapper.InsuranceProductMapper;
 import com.schj.pojo.po.CustomerInfo;
 import com.schj.pojo.po.ExcelExporter;
 import com.schj.pojo.po.InsurancePolicy;
@@ -34,9 +34,8 @@ public class ExcelExporterServiceImpl implements ExcelExporterService {
 
     @Autowired
     private CustomerInfoMapper customerInfoMapper;
-
     @Autowired
-    private InsuranceProductMapper insuranceProductMapper;
+    private EnumValue enumValue;
 
 
     /**
@@ -85,6 +84,21 @@ public class ExcelExporterServiceImpl implements ExcelExporterService {
             excelExporter.setPolicyholder(policyholder);
             excelExporter.setInsured(insured);
             excelExporter.setBeneficiary(beneficiary);
+
+            String policyStatus = enumValue.getEnumByCode(excelExporter.getPolicyStatus());
+            if(BeanUtil.isNotEmpty(policyStatus)){
+                excelExporter.setPolicyStatus(policyStatus);
+            }
+
+            String beneficiaryType = enumValue.getEnumByCode(excelExporter.getBeneficiaryType());
+            if(BeanUtil.isNotEmpty(beneficiaryType)){
+                excelExporter.setBeneficiaryType(beneficiaryType);
+            }
+
+            String paymentMethod = enumValue.getEnumByCode(excelExporter.getPaymentMethod());
+            if(BeanUtil.isNotEmpty(paymentMethod)){
+                excelExporter.setPaymentMethod(paymentMethod);
+            }
 
             //添加到打印列表里
             excelExporterList.add(excelExporter);
