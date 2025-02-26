@@ -54,4 +54,10 @@ public interface CustomerInfoMapper{
 
     @Delete("update customer_info set is_deleted = 1 where policy_no = #{policyNo}")
     void deleteCustomerInfoByPolicyNo(Long policyNo);
+
+    /**
+     * 批量插入客户信息
+     * @param customerInfoList
+     */
+    void batchInsertCustomerInfo(List<CustomerInfo> customerInfoList);
 }

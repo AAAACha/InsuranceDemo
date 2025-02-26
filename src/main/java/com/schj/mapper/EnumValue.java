@@ -3,6 +3,8 @@ package com.schj.mapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 /**
  * @Descriptioin EnumValue
  * @Author AvA
@@ -12,4 +14,6 @@ import org.apache.ibatis.annotations.Select;
 public interface EnumValue {
     @Select("select enum_name from enum_value where enum_code = #{enum_code}")
     String getEnumByCode(String enum_code);
+
+    List<String> getEnumNameByEnumCodeList(List<String> enumCodeList);
 }

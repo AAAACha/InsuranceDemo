@@ -2,6 +2,7 @@ package com.schj.pojo.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.schj.pojo.po.CustomerInfo;
+import com.schj.pojo.po.UserInputProduct;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -42,7 +43,7 @@ public class InsurancePolicyReqDTO {
      * 产品代码列表
      * 包含了该保险单涵盖的所有产品代码
      */
-    private List<Long> productIdList;
+    private List<UserInputProduct> productList;
 
     /**
      * 保险单状态

@@ -32,4 +32,6 @@ public interface InsurancePolicyMapper{
 
     @Delete("delete from insurance_policy where policy_no = #{policyNo}")
     void deleteInsurancePolicyByPolicyNo(Long policyNo);
+
+    void batchInsertInsurancePolicy(List<InsurancePolicy> policyList);
 }

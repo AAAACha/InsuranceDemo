@@ -4,40 +4,56 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.schj.mapper.InsurancePolicyMapper">
-    <resultMap id="InsurancePolicyResultMap" type="com.schj.pojo.po.InsurancePolicy">
+    <resultMap id="InsurancePolicyResultMap"
+               type="com.schj.pojo.po.InsurancePolicy">
         <!-- 主键字段 -->
         <id column="id" property="id" jdbcType="BIGINT"/>
 
         <!-- 核心业务字段 -->
         <result column="policy_no" property="policyNo" jdbcType="VARCHAR"/>
         <result column="proposal_no" property="proposalNo" jdbcType="VARCHAR"/>
-        <result column="company_code" property="companyCode" jdbcType="INTEGER"/>
-        <result column="company_name" property="companyName" jdbcType="VARCHAR"/>
-        <result column="product_code" property="productCode" jdbcType="INTEGER"/>
-        <result column="product_name" property="productName" jdbcType="VARCHAR"/>
+        <result column="company_code" property="companyCode"
+                jdbcType="INTEGER"/>
+        <result column="company_name" property="companyName"
+                jdbcType="VARCHAR"/>
+        <result column="product_code" property="productCode"
+                jdbcType="INTEGER"/>
+        <result column="product_name" property="productName"
+                jdbcType="VARCHAR"/>
 
         <!-- 状态与时间相关 -->
-        <result column="policy_status" property="policyStatus" jdbcType="VARCHAR"/>
-        <result column="application_time" property="applicationTime" jdbcType="TIMESTAMP"/>
-        <result column="effective_time" property="effectiveTime" jdbcType="TIMESTAMP"/>
+        <result column="policy_status" property="policyStatus"
+                jdbcType="VARCHAR"/>
+        <result column="application_time" property="applicationTime"
+                jdbcType="TIMESTAMP"/>
+        <result column="effective_time" property="effectiveTime"
+                jdbcType="TIMESTAMP"/>
 
         <!-- 金额相关字段 -->
         <result column="premium" property="premium" jdbcType="DECIMAL"/>
-        <result column="insured_amount" property="insuredAmount" jdbcType="DECIMAL"/>
+        <result column="insured_amount" property="insuredAmount"
+                jdbcType="DECIMAL"/>
 
-        <result column="beneficiary_type" property="beneficiaryType" jdbcType="VARCHAR"/>
+        <result column="beneficiary_type" property="beneficiaryType"
+                jdbcType="VARCHAR"/>
         <!-- 缴费信息 -->
-        <result column="payment_years" property="paymentYears" jdbcType="INTEGER"/>
-        <result column="payment_method" property="paymentMethod" jdbcType="VARCHAR"/>
-        <result column="payment_times" property="paymentTimes" jdbcType="INTEGER"/>
+        <result column="payment_years" property="paymentYears"
+                jdbcType="INTEGER"/>
+        <result column="payment_method" property="paymentMethod"
+                jdbcType="VARCHAR"/>
+        <result column="payment_times" property="paymentTimes"
+                jdbcType="INTEGER"/>
 
         <!-- 保障信息 -->
-        <result column="coverage_period" property="coveragePeriod" jdbcType="VARCHAR"/>
+        <result column="coverage_period" property="coveragePeriod"
+                jdbcType="VARCHAR"/>
 
         <!-- 系统字段 -->
-        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP"/>
+        <result column="created_time" property="createdTime"
+                jdbcType="TIMESTAMP"/>
         <result column="creator" property="creator" jdbcType="VARCHAR"/>
-        <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP"/>
+        <result column="updated_time" property="updatedTime"
+                jdbcType="TIMESTAMP"/>
         <result column="updater" property="updater" jdbcType="VARCHAR"/>
         <result column="is_deleted" property="isDeleted" jdbcType="TINYINT"/>
     </resultMap>
@@ -88,31 +104,83 @@
                    #{updater},
                    #{isDeleted})
     </insert>
+
+    <insert id="batchInsertInsurancePolicy">
+        insert into insurance_policy
+        (id, policy_no, proposal_no, company_code,
+        company_name, product_code, product_name, policy_status,
+        application_time,
+        effective_time, premium, insured_amount, beneficiary_type,
+        payment_years,
+        payment_method, payment_times, coverage_period, creator, created_time,
+        updater,
+        updated_time, is_deleted)
+        values
+        <foreach collection="policyList" item="InsurancePolicy" separator=",">
+            (#{InsurancePolicy.id}, #{InsurancePolicy.policyNo},
+            #{InsurancePolicy.proposalNo},
+            #{InsurancePolicy.companyCode}, #{InsurancePolicy.companyName},
+            #{InsurancePolicy.productCode}, #{InsurancePolicy.productName},
+            #{InsurancePolicy.policyStatus},
+            #{InsurancePolicy.applicationTime},
+            #{InsurancePolicy.effectiveTime},
+            #{InsurancePolicy.premium}, #{InsurancePolicy.insuredAmount},
+            #{InsurancePolicy.beneficiaryType},
+            #{InsurancePolicy.paymentYears}, #{InsurancePolicy.paymentMethod},
+            #{InsurancePolicy.paymentTimes}, #{InsurancePolicy.coveragePeriod},
+            #{InsurancePolicy.creator},
+            #{InsurancePolicy.createdTime}, #{InsurancePolicy.updater},
+            #{InsurancePolicy.updatedTime},
+            #{InsurancePolicy.isDeleted})
+        </foreach>
+    </insert>
+
+
     <update id="updateInsurancePolicyById">
         update insurance_policy
-        set
-            policy_no = #{policyNo},
-            proposal_no = #{proposalNo},
-            company_code = #{companyCode},
-            company_name = #{companyName},
-            policy_status = #{policyStatus},
+        set policy_no        = #{policyNo},
+            proposal_no      = #{proposalNo},
+            company_code     = #{companyCode},
+            company_name     = #{companyName},
+            policy_status    = #{policyStatus},
             application_time = #{applicationTime},
-            effective_time = #{effectiveTime},
-            premium = #{premium},
-            insured_amount = #{insuredAmount},
+            effective_time   = #{effectiveTime},
+            premium          = #{premium},
+            insured_amount   = #{insuredAmount},
             beneficiary_type = #{beneficiaryType},
-            payment_years = #{paymentYears},
-            payment_method = #{paymentMethod},
-            payment_times = #{paymentTimes},
-            coverage_period = #{coveragePeriod},
-            updated_time = #{updatedTime},
-            updater = #{updater}
+            payment_years    = #{paymentYears},
+            payment_method   = #{paymentMethod},
+            payment_times    = #{paymentTimes},
+            coverage_period  = #{coveragePeriod},
+            updated_time     = #{updatedTime},
+            updater          = #{updater}
         where id = #{id}
           and is_deleted = 0
     </update>
     <select id="getInsurancePolicyList"
             resultMap="InsurancePolicyResultMap">
-        select *
+        select id,
+               policy_no as policyNo,
+               proposal_no as proposalNo,
+               company_code as companyCode,
+               company_name as companyName,
+               product_code as productCode,
+               product_name as productName,
+               policy_status as policyStatus,
+               application_time as applicationTime,
+               effective_time as effectiveTime,
+               premium,
+               insured_amount as insuredAmount,
+               beneficiary_type as beneficiaryType,
+               payment_years as paymentYears,
+               payment_method as paymentMethod,
+               payment_times as paymentTimes,
+               coverage_period as coveragePeriod,
+               created_time as createdTime,
+               creator,
+               updated_time as updatedTime,
+               updater,
+               is_deleted as isDeleted
         from insurance_policy
         order by updated_time desc
         limit #{count};
@@ -120,7 +188,29 @@
 
     <select id="list" resultMap="InsurancePolicyResultMap"
             parameterType="com.schj.pojo.dto.request.PolicyQueryRequest">
-        SELECT * FROM insurance_policy
+        SELECT id,
+        policy_no as policyNo,
+        proposal_no as proposalNo,
+        company_code as companyCode,
+        company_name as companyName,
+        product_code as productCode,
+        product_name as productName,
+        policy_status as policyStatus,
+        application_time as applicationTime,
+        effective_time as effectiveTime,
+        premium,
+        insured_amount as insuredAmount,
+        beneficiary_type as beneficiaryType,
+        payment_years as paymentYears,
+        payment_method as paymentMethod,
+        payment_times as paymentTimes,
+        coverage_period as coveragePeriod,
+        created_time as createdTime,
+        creator,
+        updated_time as updatedTime,
+        updater,
+        is_deleted as isDeleted
+        FROM insurance_policy
         <where>
             <if test="policyNo != null and policyNo != ''">
                 and policy_no = #{policyNo}
@@ -147,7 +237,28 @@
     </select>
     <select id="getInsurancePolicyById"
             resultMap="InsurancePolicyResultMap">
-        select *
+        select id,
+               policy_no as policyNo,
+               proposal_no as proposalNo,
+               company_code as companyCode,
+               company_name as companyName,
+               product_code as productCode,
+               product_name as productName,
+               policy_status as policyStatus,
+               application_time as applicationTime,
+               effective_time as effectiveTime,
+               premium,
+               insured_amount as insuredAmount,
+               beneficiary_type as beneficiaryType,
+               payment_years as paymentYears,
+               payment_method as paymentMethod,
+               payment_times as paymentTimes,
+               coverage_period as coveragePeriod,
+               created_time as createdTime,
+               creator,
+               updated_time as updatedTime,
+               updater,
+               is_deleted as isDeleted
         from insurance_policy
         where id = #{id}
     </select>

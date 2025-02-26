@@ -61,10 +61,53 @@
 
     <select id="getInsuranceProductById"
             resultMap="productResultMap">
-        select *
+        select id,
+               product_code as productCode,
+               product_name as productName,
+               product_category as productCategory,
+               duration_type as durationType,
+               product_status as productStatus,
+               payment_years as paymentYears,
+               payment_method as paymentMethod,
+               created_time as createdTime,
+               updated_time as updatedTime,
+               creator,
+               updater,
+               is_deleted as isDeleted
         from insurance_product
         where id = #{id}
+        and is_deleted = 0
+    </select>
+    <select id="selectInsuranceProductByIdList"
+            resultMap="productResultMap">
+        select id,
+        product_code as productCode,
+        product_name as productName,
+        product_category as productCategory,
+        duration_type as durationType,
+        product_status as productStatus,
+        payment_years as paymentYears,
+        payment_method as paymentMethod,
+        created_time as createdTime,
+        updated_time as updatedTime,
+        creator,
+        updater,
+        is_deleted as isDeleted
+        from insurance_product
+        where id in
+        <foreach collection="productIdList" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
     </select>
 
-
+    <select id="getInsuranceProductByCodeAndYearsAndMethod">
+        SELECT count(*)
+        FROM insurance_product
+        WHERE
+        <foreach collection="list" item="product" index="index" open="(" separator=" OR " close=")">
+            (id = #{product.id}
+            AND payment_years = #{product.paymentYears}
+            AND payment_method = #{product.paymentMethod})
+        </foreach>
+    </select>
 </mapper>

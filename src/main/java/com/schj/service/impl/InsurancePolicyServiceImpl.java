@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,6 +31,9 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
     private static final String POLICYHOLDER_TYPE = "A";
     private static final String INSURED_TYPE = "B";
     private static final String BENEFICIARY_TYPE = "S";
+    private static final String BENEFICIARYTYPE_STATUTORY = "statutory ";
+    private static final String BENEFICIARYTYPE_DESIGNATED = "designated";
+
 
     @Autowired
     private InsurancePolicyMapper insurancePolicyMapper;
@@ -67,11 +71,12 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
         // 生成唯一的投保单号
         long proposalNo = snowflakeIdWorker.nextId();
 
-        // 将请求数据转换为保险单实体对象
-        InsurancePolicy insurancePolicy = BeanUtil.toBean(insurancePolicyReqDTO, InsurancePolicy.class);
+
 
         //查询保司输入是否正确
         checkInsuranceCompany(insurancePolicyReqDTO);
+
+        checkInsurancePeoduct(insurancePolicyReqDTO);
 
         // 获取并验证受益人类型
         String beneficiaryType = enumValue.getEnumByCode(insurancePolicyReqDTO.getBeneficiaryType());
@@ -87,21 +92,39 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
 
         // 获得客户列表
         List<CustomerInfo> customerInfoList = insurancePolicyReqDTO.getCustomerInfoList();
+        List<String> enumCodeList = new ArrayList<>();
+        List<String> enumNameList = new ArrayList<>();
+
+        for (CustomerInfo customerInfo : customerInfoList) {
+            enumCodeList.add(customerInfo.getIdType());
+        }
+
+        enumNameList = enumValue.getEnumNameByEnumCodeList(enumCodeList);
 
         //判断证件类型是否合规
-        for (CustomerInfo customerInfo : customerInfoList) {
-            String IdType = enumValue.getEnumByCode(customerInfo.getIdType());
-            if (BeanUtil.isEmpty(IdType)) {
+        for (String customerInfoIdType : enumNameList) {
+            if (BeanUtil.isEmpty(customerInfoIdType)) {
                 throw new RuntimeException("请输入合规的证件类型");
             }
         }
 
-        // 投保人个数
-        long policyholdercount = customerInfoList.stream().filter(customer -> POLICYHOLDER_TYPE.equals(customer.getCustomerType())).count();
-        // 被保人个数
-        long insuredcount = customerInfoList.stream().filter(customer -> INSURED_TYPE.equals(customer.getCustomerType())).count();
-        // 受益人个数
-        long Beneficiarycount = customerInfoList.stream().filter(customer -> BENEFICIARY_TYPE.equals(customer.getCustomerType())).count();
+        // 初始化计数器
+        long policyholdercount = 0;
+        long insuredcount = 0;
+        long Beneficiarycount = 0;
+
+        // 使用for循环遍历customerInfoList
+        for (CustomerInfo customer : customerInfoList) {
+            if (POLICYHOLDER_TYPE.equals(customer.getCustomerType())) {
+                policyholdercount++;
+            } else if (INSURED_TYPE.equals(customer.getCustomerType())) {
+                insuredcount++;
+            } else if (BENEFICIARY_TYPE.equals(customer.getCustomerType())) {
+                Beneficiarycount++;
+            }
+        }
+
+        List<CustomerInfo> newCustomerInfoList = new ArrayList<>();
 
         // 根据受益人类型处理客户信息
         beneficiaryType = insurancePolicyReqDTO.getBeneficiaryType();
@@ -110,13 +133,17 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
             if (policyholdercount > 0 && insuredcount > 0 && Beneficiarycount == 0) {
                 // 插入所有客户信息到数据库
                 for (CustomerInfo customerInfo : customerInfoList) {
+                    long customerId = snowflakeIdWorker.nextId();
+                    customerInfo.setId(customerId);
+                    customerInfo.setPolicyNo(policyNo);
                     customerInfo.setCreator(ADMIN_USER);
                     customerInfo.setCreatedTime(LocalDateTime.now());
                     customerInfo.setUpdater(ADMIN_USER);
                     customerInfo.setUpdatedTime(LocalDateTime.now());
                     customerInfo.setIsDeleted(0);
-                    customerInfoMapper.insertCustomerInfoService(customerInfo);
+                    newCustomerInfoList.add(customerInfo);
                 }
+                customerInfoMapper.batchInsertCustomerInfo(newCustomerInfoList);
             } else {
                 // 如果不符合条件，抛出异常
                 throw new RuntimeException("受益人状态时法定的情况用户不可指定受益人");
@@ -142,8 +169,9 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
                         customerInfo.setUpdater(ADMIN_USER);
                         customerInfo.setUpdatedTime(LocalDateTime.now());
                         customerInfo.setIsDeleted(0);
-                        customerInfoMapper.insertCustomerInfoService(customerInfo);
+                        newCustomerInfoList.add(customerInfo);
                     }
+                    customerInfoMapper.batchInsertCustomerInfo(newCustomerInfoList);
                 } else {
                     throw new RuntimeException("请检查投保人信息是否正确");
                 }
@@ -151,14 +179,23 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
                 // 如果不符合条件，抛出异常
                 throw new RuntimeException("请检查投保人信息是否正确");
             }
+        } else {
+            throw new RuntimeException("您输入的受益人类型不正确,请重新检查");
         }
 
         // 获取产品ID列表
-        List<Long> productIdList = insurancePolicyReqDTO.getProductIdList();
+        List<Long> productIdList = new ArrayList<>();
+        List<UserInputProduct> userInputProductList = insurancePolicyReqDTO.getProductList();
+        for (UserInputProduct userInputProduct : userInputProductList) {
+            productIdList.add(userInputProduct.getId());
+        }
 
-        for (Long l : productIdList) {
+        List<InsuranceProduct> productList = insuranceProductMapper.selectInsuranceProductByIdList(productIdList);
 
-            InsuranceProduct product = insuranceProductMapper.getInsuranceProductById(l);
+        List<InsurancePolicy> newPolicyList = new ArrayList<>();
+
+        for (InsuranceProduct product : productList) {
+
             if (BeanUtil.isEmpty(product)) {
                 throw new RuntimeException("请输入合规的险种ID");
             }
@@ -170,6 +207,9 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
             if ("out_of_sale".equals(product.getProductStatus())) {
                 throw new RuntimeException("请输入有效状态合规的险种ID");
             }
+            // 将请求数据转换为保险单实体对象
+            InsurancePolicy insurancePolicy = BeanUtil.toBean(insurancePolicyReqDTO, InsurancePolicy.class);
+
             // 生成唯一的保险单主键
             long id = snowflakeIdWorker.nextId();
             // 设置保险单的基本信息
@@ -186,9 +226,10 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
             insurancePolicy.setUpdatedTime(LocalDateTime.now());
             insurancePolicy.setIsDeleted(0);
 
-            // 插入保险单信息到数据库
-            insurancePolicyMapper.insertInsurancePolicy(insurancePolicy);
+            newPolicyList.add(insurancePolicy);
         }
+        // 插入保险单信息到数据库
+        insurancePolicyMapper.batchInsertInsurancePolicy(newPolicyList);
     }
 
 
@@ -210,21 +251,21 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
         InsurancePolicyResDTO result = BeanUtil.toBean(insurancePolicy, InsurancePolicyResDTO.class);
 
         String policyStatus = enumValue.getEnumByCode(result.getPolicyStatus());
-        if(BeanUtil.isNotEmpty(policyStatus)){
+        if (BeanUtil.isNotEmpty(policyStatus)) {
             result.setPolicyStatus(policyStatus);
         } else {
             throw new RuntimeException("您查询的保单的状态不合法");
         }
 
         String beneficiaryType = enumValue.getEnumByCode(result.getBeneficiaryType());
-        if(BeanUtil.isNotEmpty(beneficiaryType)){
+        if (BeanUtil.isNotEmpty(beneficiaryType)) {
             result.setBeneficiaryType(beneficiaryType);
         } else {
             throw new RuntimeException("您查询的保单的受益人类型不合法");
         }
 
         String paymentMethod = enumValue.getEnumByCode(result.getPaymentMethod());
-        if(BeanUtil.isNotEmpty(paymentMethod)){
+        if (BeanUtil.isNotEmpty(paymentMethod)) {
             result.setPaymentMethod(paymentMethod);
         } else {
             throw new RuntimeException("您查询的保单的缴费方式类型不合法");
@@ -263,47 +304,53 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
             throw new RuntimeException(" 输入的受益人类型不合法");
         }
 
+        //检查保司内容
         checkInsuranceCompany(insurancePolicyReqDTO);
 
-        //插入新的
         // 获得客户列表
         List<CustomerInfo> customerInfoList = insurancePolicyReqDTO.getCustomerInfoList();
 
         //判断证件类型是否合规
-        for (CustomerInfo customerInfo : customerInfoList) {
-            String IdType = enumValue.getEnumByCode(customerInfo.getIdType());
-            if (BeanUtil.isEmpty(IdType)) {
-                throw new RuntimeException("请输入合规的证件类型");
+        checkCustomerInfoIdType(customerInfoList);
+
+        // 初始化计数器
+        long policyholdercount = 0;
+        long insuredcount = 0;
+        long Beneficiarycount = 0;
+
+        // 使用for循环遍历customerInfoList
+        for (CustomerInfo customer : customerInfoList) {
+            if (POLICYHOLDER_TYPE.equals(customer.getCustomerType())) {
+                policyholdercount++;
+            } else if (INSURED_TYPE.equals(customer.getCustomerType())) {
+                insuredcount++;
+            } else if (BENEFICIARY_TYPE.equals(customer.getCustomerType())) {
+                Beneficiarycount++;
             }
         }
 
-        // 投保人个数
-        long policyholdercount = customerInfoList.stream().filter(customer -> POLICYHOLDER_TYPE.equals(customer.getCustomerType())).count();
-        // 被保人个数
-        long insuredcount = customerInfoList.stream().filter(customer -> INSURED_TYPE.equals(customer.getCustomerType())).count();
-        // 受益人个数
-        long Beneficiarycount = customerInfoList.stream().filter(customer -> BENEFICIARY_TYPE.equals(customer.getCustomerType())).count();
+        List<CustomerInfo> newCustomerInfoList = new ArrayList<>();
 
         // 根据受益人类型处理客户信息
         beneficiaryType = insurancePolicyReqDTO.getBeneficiaryType();
-        if ("statutory".equals(beneficiaryType)) {
+        if (BENEFICIARYTYPE_STATUTORY.equals(beneficiaryType)) {
             // 如果受益人类型为法定，验证投保人和被保人存在且受益人不存在
             if (policyholdercount > 0 && insuredcount > 0 && Beneficiarycount == 0) {
                 // 插入所有客户信息到数据库
                 for (CustomerInfo customerInfo : customerInfoList) {
-                    customerInfo.setPolicyNo(policyNo);
                     customerInfo.setCreator(ADMIN_USER);
                     customerInfo.setCreatedTime(LocalDateTime.now());
                     customerInfo.setUpdater(ADMIN_USER);
                     customerInfo.setUpdatedTime(LocalDateTime.now());
                     customerInfo.setIsDeleted(0);
-                    customerInfoMapper.insertCustomerInfoService(customerInfo);
+                    newCustomerInfoList.add(customerInfo);
                 }
+                customerInfoMapper.batchInsertCustomerInfo(newCustomerInfoList);
             } else {
                 // 如果不符合条件，抛出异常
                 throw new RuntimeException("受益人状态时法定的情况用户不可指定受益人");
             }
-        } else if ("designated".equals(beneficiaryType)) {
+        } else if (BENEFICIARYTYPE_DESIGNATED.equals(beneficiaryType)) {
             // 如果受益人类型为指定，验证投保人、被保人和受益人均存在
             if (policyholdercount > 0 && insuredcount > 0 && Beneficiarycount > 0) {
                 int beneficiaryRate = 0;
@@ -318,14 +365,19 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
                 // 如果受益比例总和为100%，插入所有客户信息到数据库
                 if (beneficiaryRate == 100) {
                     for (CustomerInfo customerInfo : customerInfoList) {
+                        long customerId = snowflakeIdWorker.nextId();
+                        customerInfo.setId(customerId);
                         customerInfo.setPolicyNo(policyNo);
                         customerInfo.setCreator(ADMIN_USER);
                         customerInfo.setCreatedTime(LocalDateTime.now());
                         customerInfo.setUpdater(ADMIN_USER);
                         customerInfo.setUpdatedTime(LocalDateTime.now());
                         customerInfo.setIsDeleted(0);
-                        customerInfoMapper.insertCustomerInfoService(customerInfo);
+                        newCustomerInfoList.add(customerInfo);
                     }
+                    customerInfoMapper.batchInsertCustomerInfo(newCustomerInfoList);
+                } else {
+                    throw new RuntimeException("请检查投保人信息是否正确");
                 }
             } else {
                 // 如果不符合条件，抛出异常
@@ -333,15 +385,18 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
             }
         }
 
-        // 获取产品ID列表
-        List<Long> productIdList = insurancePolicyReqDTO.getProductIdList();
+        List<Long> productIdList = new ArrayList<>();
+        List<UserInputProduct> userInputProductList = insurancePolicyReqDTO.getProductList();
+        for (UserInputProduct userInputProduct : userInputProductList) {
+            productIdList.add(userInputProduct.getId());
+        }
 
-        // 遍历产品ID列表，创建并插入产品策略关联信息
-        for (Long l : productIdList) {
-            long newId = snowflakeIdWorker.nextId();
+        List<InsuranceProduct> productList = insuranceProductMapper.selectInsuranceProductByIdList(productIdList);
 
-            //判断insurance_product表中是否存在id为l的数据
-            InsuranceProduct product = insuranceProductMapper.getInsuranceProductById(l);
+        List<InsurancePolicy> newPolicyList = new ArrayList<>();
+
+        for (InsuranceProduct product : productList) {
+
             if (BeanUtil.isEmpty(product)) {
                 throw new RuntimeException("请输入合规的险种ID");
             }
@@ -354,22 +409,30 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
                 throw new RuntimeException("请输入有效状态合规的险种ID");
             }
 
-            insurancePolicy.setId(newId);
-            insurancePolicy.setPolicyNo(policyNo);
-            insurancePolicy.setProposalNo(proposalNo);
-            insurancePolicy.setProductCode(product.getProductCode());
-            insurancePolicy.setProductName(product.getProductName());
-            insurancePolicy.setPaymentYears(product.getPaymentYears());
-            insurancePolicy.setPaymentMethod(product.getPaymentMethod());
-            insurancePolicy.setCreator(ADMIN_USER);
-            insurancePolicy.setCreatedTime(LocalDateTime.now());
-            insurancePolicy.setUpdater(ADMIN_USER);
-            insurancePolicy.setUpdatedTime(LocalDateTime.now());
-            insurancePolicy.setIsDeleted(0);
+            InsurancePolicy newInsurancePolicy = new InsurancePolicy();
 
-            // 插入保险单信息到数据库
-            insurancePolicyMapper.insertInsurancePolicy(insurancePolicy);
+            BeanUtil.copyProperties(insurancePolicy, newInsurancePolicy);
+
+            // 生成唯一的保险单主键
+            id = snowflakeIdWorker.nextId();
+            // 设置保险单的基本信息
+            newInsurancePolicy.setId(id);
+            newInsurancePolicy.setPolicyNo(policyNo);
+            newInsurancePolicy.setProposalNo(proposalNo);
+            newInsurancePolicy.setProductCode(product.getProductCode());
+            newInsurancePolicy.setProductName(product.getProductName());
+            newInsurancePolicy.setPaymentYears(product.getPaymentYears());
+            newInsurancePolicy.setPaymentMethod(product.getPaymentMethod());
+            newInsurancePolicy.setCreator(ADMIN_USER);
+            newInsurancePolicy.setCreatedTime(LocalDateTime.now());
+            newInsurancePolicy.setUpdater(ADMIN_USER);
+            newInsurancePolicy.setUpdatedTime(LocalDateTime.now());
+            newInsurancePolicy.setIsDeleted(0);
+
+            newPolicyList.add(newInsurancePolicy);
         }
+        // 插入保险单信息到数据库
+        insurancePolicyMapper.batchInsertInsurancePolicy(newPolicyList);
     }
 
 
@@ -399,8 +462,8 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
     /**
      * 保单信息分页查询
      *
-     * @param policyQueryRequest
-     * @return
+     * @param policyQueryRequest 查询请求对象，包含查询条件、页码和每页大小
+     * @return 返回包含保单信息的PageBean对象
      */
     @Override
     public PageBean getPoliciesByCondition(PolicyQueryRequest policyQueryRequest) {
@@ -413,7 +476,8 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
     /**
      * 查询保司输入是否正确
      *
-     * @param insurancePolicyReqDTO
+     * @param insurancePolicyReqDTO 保险政策请求数据传输对象
+     * @throws RuntimeException 如果找不到匹配的保险公司的信息，则抛出运行时异常
      */
     private void checkInsuranceCompany(InsurancePolicyReqDTO insurancePolicyReqDTO) {
         int companycount = insuranceCompanyMapper.selectCompanyByCodeAndName(insurancePolicyReqDTO.getCompanyCode(), insurancePolicyReqDTO.getCompanyName());
@@ -422,4 +486,46 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
             throw new RuntimeException("请输入合规的保司代码及名称");
         }
     }
+
+    /**
+     * 检查客户证件信息是否正确
+     * @param customerInfoList 客户信息列表，包含客户证件类型等信息
+     * @throws RuntimeException 如果证件类型不合规，则抛出运行时异常
+     */
+    private void checkCustomerInfoIdType(List<CustomerInfo> customerInfoList) {
+        List<String> enumCodeList = new ArrayList<>();
+        List<String> enumNameList = new ArrayList<>();
+
+        for (CustomerInfo customerInfo : customerInfoList) {
+            enumCodeList.add(customerInfo.getIdType());
+        }
+        enumNameList = enumValue.getEnumNameByEnumCodeList(enumCodeList);
+
+        //判断证件类型是否合规
+        for (String customerInfoIdType : enumNameList) {
+            if (BeanUtil.isEmpty(customerInfoIdType)) {
+                throw new RuntimeException("请输入合规的证件类型");
+            }
+        }
+    }
+
+    /**
+     * 检查险种输入是否正确
+     * @param insurancePolicyReqDTO 保险政策请求数据传输对象，包含用户输入的险种信息
+     * @throws RuntimeException 如果输入的险种信息不正确，则抛出运行时异常
+     */
+    private void checkInsurancePeoduct(InsurancePolicyReqDTO insurancePolicyReqDTO){
+        List<InsuranceProduct> userProductList = new ArrayList<>();
+        List<UserInputProduct> idList = insurancePolicyReqDTO.getProductList();
+        for (UserInputProduct userInputProduct : idList) {
+            InsuranceProduct insuranceProduct = BeanUtil.toBean(userInputProduct, InsuranceProduct.class);
+            userProductList.add(insuranceProduct);
+        }
+
+        int productCount = insuranceProductMapper.getInsuranceProductByCodeAndYearsAndMethod(userProductList);
+        if(userProductList.size() != productCount){
+            throw new RuntimeException("请检查您输入的险种信息");
+        }
+    }
+
 }
