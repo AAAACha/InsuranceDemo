@@ -38,14 +38,6 @@ public class ExcelExporterServiceImpl implements ExcelExporterService {
     private EnumValue enumValue;
 
 
-    /**
-     * 该方法用于导出保险政策信息到Excel文件
-     * 它首先创建一个唯一的Excel文件名，然后尝试创建该文件
-     * 接着，它从数据库获取指定数量的保险政策信息，遍历这些信息，并将其转换为适合导出的格式
-     * 最后，使用EasyExcel库将处理后的数据写入Excel文件中
-     *
-     * @param count 指定从数据库中获取的保险政策信息的数量
-     */
     @Override
     @Transactional
     public void ExcelExporter(int count) {
@@ -53,59 +45,131 @@ public class ExcelExporterServiceImpl implements ExcelExporterService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
         String fileName = LocalDateTime.now().format(formatter) + "_保单信息表.xlsx";
         File excelFile = new File("D:/Test/" + fileName);
-        // 检查Excel文件是否存在，如果不存在则尝试创建它
-        if (!excelFile.exists()) {
-            try {
-                excelFile.createNewFile();
-            } catch (IOException e) {
-                // 如果文件创建过程中发生IO异常，打印异常信息
-                e.printStackTrace();
-            }
-        }
 
-        List<ExcelExporter> excelExporterList = new ArrayList<>();
+        // 检查并创建Excel文件
+        createExcelFileIfNotExists(excelFile);
 
         // 从数据库获取指定数量的保险政策信息列表
         List<InsurancePolicy> insurancePolicyList = insurancePolicyMapper.getInsurancePolicyList(count);
 
-        // 遍历保险政策列表，为每个政策创建一个ExcelExporter对象，并添加到列表中
-        for (InsurancePolicy insurancePolicy : insurancePolicyList) {
+        // 将保险政策信息转换为Excel导出对象列表
+        List<ExcelExporter> excelExporterList = convertToExcelExporterList(insurancePolicyList);
 
+        // 使用EasyExcel库将保险政策信息列表写入Excel文件中
+        writeExcelFile(excelFile, excelExporterList);
+    }
+
+    /**
+     * 创建Excel文件（如果文件不存在）
+     *
+     * @param excelFile Excel文件对象
+     */
+    private void createExcelFileIfNotExists(File excelFile) {
+        if (!excelFile.exists()) {
+            try {
+                boolean created = excelFile.createNewFile();
+                if (!created) {
+                    throw new RuntimeException("无法创建Excel文件: " + excelFile.getAbsolutePath());
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("创建Excel文件失败: " + e.getMessage(), e);
+            }
+        }
+    }
+
+    /**
+     * 将保险政策信息列表转换为Excel导出对象列表
+     *
+     * @param insurancePolicyList 保险政策信息列表
+     * @return Excel导出对象列表
+     */
+    private List<ExcelExporter> convertToExcelExporterList(List<InsurancePolicy> insurancePolicyList) {
+        List<ExcelExporter> excelExporterList = new ArrayList<>();
+
+        for (InsurancePolicy insurancePolicy : insurancePolicyList) {
             ExcelExporter excelExporter = BeanUtil.toBean(insurancePolicy, ExcelExporter.class);
 
-            // 获取与当前保险政策关联的客户信息列表，并根据客户类型分割为投保人、被保险人和受益人
+            // 获取与当前保险政策关联的客户信息列表
             List<CustomerInfo> customerInfoList = customerInfoMapper.getCustomerInfoByPolicyNo(insurancePolicy.getPolicyNo());
 
-            String policyholder = customerInfoList.stream().filter(customer -> "A".equals(customer.getCustomerType())).map(CustomerInfo::getFullName).collect(Collectors.toList()).toString().replaceAll("[\\[\\]]", "");
-            String insured = customerInfoList.stream().filter(customer -> "B".equals(customer.getCustomerType())).map(CustomerInfo::getFullName).collect(Collectors.toList()).toString().replaceAll("[\\[\\]]", "");
-            String beneficiary = customerInfoList.stream().filter(customer -> "S".equals(customer.getCustomerType())).map(CustomerInfo::getFullName).collect(Collectors.toList()).toString().replaceAll("[\\[\\]]", "");
+            // 设置投保人、被保险人和受益人信息
+            setCustomerInfo(excelExporter, customerInfoList);
 
-            //属性设置
-            excelExporter.setPolicyholder(policyholder);
-            excelExporter.setInsured(insured);
-            excelExporter.setBeneficiary(beneficiary);
+            // 设置枚举值（保单状态、受益人类型、缴费方式）
+            setEnumValues(excelExporter);
 
-            String policyStatus = enumValue.getEnumByCode(excelExporter.getPolicyStatus());
-            if(BeanUtil.isNotEmpty(policyStatus)){
-                excelExporter.setPolicyStatus(policyStatus);
-            }
-
-            String beneficiaryType = enumValue.getEnumByCode(excelExporter.getBeneficiaryType());
-            if(BeanUtil.isNotEmpty(beneficiaryType)){
-                excelExporter.setBeneficiaryType(beneficiaryType);
-            }
-
-            String paymentMethod = enumValue.getEnumByCode(excelExporter.getPaymentMethod());
-            if(BeanUtil.isNotEmpty(paymentMethod)){
-                excelExporter.setPaymentMethod(paymentMethod);
-            }
-
-            //添加到打印列表里
+            // 添加到导出列表
             excelExporterList.add(excelExporter);
         }
 
-        // 使用EasyExcel库将保险政策信息列表写入Excel文件中
-        // 这里指定Excel文件、数据模型类、工作表名称和要写入的数据列表
-        EasyExcel.write(excelFile, ExcelExporter.class).sheet("保单信息").doWrite(excelExporterList);
+        return excelExporterList;
+    }
+
+    /**
+     * 设置投保人、被保险人和受益人信息
+     *
+     * @param excelExporter     Excel导出对象
+     * @param customerInfoList  客户信息列表
+     */
+    private void setCustomerInfo(ExcelExporter excelExporter, List<CustomerInfo> customerInfoList) {
+        String policyholder = getCustomerNamesByType(customerInfoList, "A");
+        String insured = getCustomerNamesByType(customerInfoList, "B");
+        String beneficiary = getCustomerNamesByType(customerInfoList, "S");
+
+        excelExporter.setPolicyholder(policyholder);
+        excelExporter.setInsured(insured);
+        excelExporter.setBeneficiary(beneficiary);
+    }
+
+    /**
+     * 根据客户类型获取客户名称列表
+     *
+     * @param customerInfoList 客户信息列表
+     * @param customerType     客户类型（A: 投保人, B: 被保险人, S: 受益人）
+     * @return 客户名称列表（逗号分隔）
+     */
+    private String getCustomerNamesByType(List<CustomerInfo> customerInfoList, String customerType) {
+        return customerInfoList.stream()
+                .filter(customer -> customerType.equals(customer.getCustomerType()))
+                .map(CustomerInfo::getFullName)
+                .collect(Collectors.joining(", "));
+    }
+
+    /**
+     * 设置枚举值（保单状态、受益人类型、缴费方式）
+     *
+     * @param excelExporter Excel导出对象
+     */
+    private void setEnumValues(ExcelExporter excelExporter) {
+        String policyStatus = enumValue.getEnumByCode(excelExporter.getPolicyStatus());
+        if (BeanUtil.isNotEmpty(policyStatus)) {
+            excelExporter.setPolicyStatus(policyStatus);
+        }
+
+        String beneficiaryType = enumValue.getEnumByCode(excelExporter.getBeneficiaryType());
+        if (BeanUtil.isNotEmpty(beneficiaryType)) {
+            excelExporter.setBeneficiaryType(beneficiaryType);
+        }
+
+        String paymentMethod = enumValue.getEnumByCode(excelExporter.getPaymentMethod());
+        if (BeanUtil.isNotEmpty(paymentMethod)) {
+            excelExporter.setPaymentMethod(paymentMethod);
+        }
+    }
+
+    /**
+     * 将Excel导出对象列表写入Excel文件
+     *
+     * @param excelFile         Excel文件对象
+     * @param excelExporterList Excel导出对象列表
+     */
+    private void writeExcelFile(File excelFile, List<ExcelExporter> excelExporterList) {
+        try {
+            EasyExcel.write(excelFile, ExcelExporter.class)
+                    .sheet("保单信息")
+                    .doWrite(excelExporterList);
+        } catch (Exception e) {
+            throw new RuntimeException("写入Excel文件失败: " + e.getMessage(), e);
+        }
     }
 }

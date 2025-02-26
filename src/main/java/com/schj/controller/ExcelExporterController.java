@@ -40,7 +40,7 @@ public class ExcelExporterController {
             }
         } catch (Exception e){
           log.error("文件导出失败, 失败原因:"+e);
-          return  Result.error("文件导出失败,失败原因" + e.getMessage());
+          return  Result.error("文件导出失败,失败原因,请重试");
         }
     }
 }
