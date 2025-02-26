@@ -11,13 +11,13 @@ import org.apache.ibatis.annotations.Select;
 @Mapper
 public interface InsuranceCompanyMapper{
 
-    Boolean insertInsuranceCompany(InsuranceCompany insuranceCompany);
+    Integer insertInsuranceCompany(InsuranceCompany insuranceCompany);
 
     InsuranceCompany getInsuranceCompanyById(Long id);
 
-    Boolean updateInsuranceCompanyById(InsuranceCompany insuranceCompany);
+    Integer updateInsuranceCompanyById(InsuranceCompany insuranceCompany);
 
-    Boolean deleteInsuranceCompanyById(Long id);
+    Integer deleteInsuranceCompanyById(Long id);
 
     /**
      * 根据保司代码及名称查询保司数量

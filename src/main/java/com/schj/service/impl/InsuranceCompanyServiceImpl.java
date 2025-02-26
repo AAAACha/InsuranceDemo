@@ -6,6 +6,7 @@ import com.schj.mapper.InsuranceCompanyMapper;
 import com.schj.pojo.dto.request.InsuranceCompanyReqDTO;
 import com.schj.pojo.dto.response.InsuranceCompanyResDTO;
 import com.schj.pojo.po.InsuranceCompany;
+import com.schj.pojo.po.Result;
 import com.schj.service.InsuranceCompanyService;
 import com.schj.utils.SnowflakeIdWorker;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class InsuranceCompanyServiceImpl implements InsuranceCompanyService {
      * @param insuranceCompanyReqDTO 包含要插入的保险公司信息的请求数据传输对象
      */
     @Override
-    public void insertInsuranceCompany(InsuranceCompanyReqDTO insuranceCompanyReqDTO) {
+    public Result insertInsuranceCompany(InsuranceCompanyReqDTO insuranceCompanyReqDTO) {
 
         InsuranceCompany insuranceCompany = new InsuranceCompany();
 
@@ -47,7 +48,9 @@ public class InsuranceCompanyServiceImpl implements InsuranceCompanyService {
         insuranceCompany.setCompanyName(insuranceCompanyReqDTO.getCompanyName());
 
         //判断保司类型是否合规
-        checkCompanyType(insuranceCompanyReqDTO);
+        if(BeanUtil.isNotEmpty(checkCompanyType(insuranceCompanyReqDTO))){
+            return Result.error("您输入的保司类型不合法,请重新输入");
+        }
         insuranceCompany.setCompanyType(insuranceCompanyReqDTO.getCompanyType());
 
         // 设置创建者和创建时间等公共字段
@@ -58,7 +61,12 @@ public class InsuranceCompanyServiceImpl implements InsuranceCompanyService {
         insuranceCompany.setIsDeleted(0);
 
         // 调用Mapper方法插入保险公司记录
-        insuranceCompanyMapper.insertInsuranceCompany(insuranceCompany);
+        Integer affectedRows = insuranceCompanyMapper.insertInsuranceCompany(insuranceCompany);
+        if(affectedRows > 0){
+            return Result.success();
+        } else {
+            return Result.error("新增保司信息失败,请重试");
+        }
     }
 
     /**
@@ -68,7 +76,7 @@ public class InsuranceCompanyServiceImpl implements InsuranceCompanyService {
      * @return 包含保险公司信息的响应数据传输对象
      */
     @Override
-    public InsuranceCompanyResDTO getInsuranceCompanyById(Long id) {
+    public Result getInsuranceCompanyById(Long id) {
 
         // 通过Mapper方法获取保险公司记录
         InsuranceCompany insuranceCompany = insuranceCompanyMapper.getInsuranceCompanyById(id);
@@ -83,7 +91,11 @@ public class InsuranceCompanyServiceImpl implements InsuranceCompanyService {
             throw new RuntimeException("您查询的保司类型不合法");
         }
 
-        return result;
+        if(BeanUtil.isNotEmpty(result)){
+            return Result.success(result);
+        } else {
+            return Result.error("您查询的保司不存在");
+        }
     }
 
     /**
@@ -93,7 +105,7 @@ public class InsuranceCompanyServiceImpl implements InsuranceCompanyService {
      * @param insuranceCompanyReqDTO 包含更新后的保险公司信息的请求数据传输对象
      */
     @Override
-    public void updateInsuranceCompanyById(Long id, InsuranceCompanyReqDTO insuranceCompanyReqDTO) {
+    public Result updateInsuranceCompanyById(Long id, InsuranceCompanyReqDTO insuranceCompanyReqDTO) {
 
         // 将请求数据传输对象转换为保险公司记录
         InsuranceCompany insuranceCompany = BeanUtil.toBean(insuranceCompanyReqDTO, InsuranceCompany.class);
@@ -102,12 +114,19 @@ public class InsuranceCompanyServiceImpl implements InsuranceCompanyService {
         insuranceCompany.setUpdater("admin");
         insuranceCompany.setUpdatedTime(LocalDateTime.now());
 
-        // 判断保司类型是否合规
-        checkCompanyType(insuranceCompanyReqDTO);
+        //判断保司类型是否合规
+        if(BeanUtil.isNotEmpty(checkCompanyType(insuranceCompanyReqDTO))){
+            return Result.error("您输入的保司类型不合法,请重新输入");
+        }
         insuranceCompany.setCompanyType(insuranceCompanyReqDTO.getCompanyType());
 
         // 调用Mapper方法更新保险公司记录
-        insuranceCompanyMapper.updateInsuranceCompanyById(insuranceCompany);
+        Integer affectedRows = insuranceCompanyMapper.updateInsuranceCompanyById(insuranceCompany);
+        if(affectedRows > 0){
+            return Result.success();
+        } else {
+            return Result.error("修改保司信息失败,请重试");
+        }
     }
 
     /**
@@ -116,19 +135,28 @@ public class InsuranceCompanyServiceImpl implements InsuranceCompanyService {
      * @param id 保险公司的唯一标识
      */
     @Override
-    public void deleteInsuranceCompanyById(Long id) {
+    public Result deleteInsuranceCompanyById(Long id) {
         // 调用Mapper方法删除保险公司记录
-        insuranceCompanyMapper.deleteInsuranceCompanyById(id);
+        Integer affectedRows = insuranceCompanyMapper.deleteInsuranceCompanyById(id);
+        if(affectedRows > 0){
+            return Result.success();
+        } else {
+            return Result.error("删除保司信息失败,您删除的保司信息不存在");
+        }
     }
 
     /**
      * 判断保司类型是否合规
      * @param insuranceCompanyReqDTO
      */
-    private void checkCompanyType(InsuranceCompanyReqDTO insuranceCompanyReqDTO){
+    private String checkCompanyType(InsuranceCompanyReqDTO insuranceCompanyReqDTO){
+        String resultMsg = "";
         String CompanyType = enumValue.getEnumByCode(insuranceCompanyReqDTO.getCompanyType());
         if (BeanUtil.isEmpty(CompanyType)) {
-            throw new RuntimeException("您输入的公司类型不存在");
+            resultMsg = "您输入的公司类型不存在";
+            return resultMsg;
         }
+
+        return resultMsg;
     }
 }

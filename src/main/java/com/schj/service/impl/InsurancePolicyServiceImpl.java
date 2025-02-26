@@ -45,13 +45,9 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
 
     private final SnowflakeIdWorker snowflakeIdWorker = new SnowflakeIdWorker(1);
 
-    /**
-     * 插入新的保单
-     * @param insurancePolicyReqDTO
-     */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void insertInsurancePolicy(InsurancePolicyReqDTO insurancePolicyReqDTO) {
+    public Result insertInsurancePolicy(InsurancePolicyReqDTO insurancePolicyReqDTO) {
         // 生成唯一的保单号和投保单号
         long policyNo = snowflakeIdWorker.nextId();
         long proposalNo = snowflakeIdWorker.nextId();
@@ -85,17 +81,17 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
         List<InsurancePolicy> newPolicyList = createInsurancePolicies(insurancePolicyReqDTO, productList, policyNo, proposalNo);
 
         // 批量插入保险单信息
-        insurancePolicyMapper.batchInsertInsurancePolicy(newPolicyList);
+        Integer affectedRows = insurancePolicyMapper.batchInsertInsurancePolicy(newPolicyList);
+        if(affectedRows > 0){
+            return Result.success();
+        } else {
+            return Result.error("新增客户信息失败,请重试");
+        }
     }
 
-    /**
-     * 根据ID查询保险单信息
-     * @param id
-     * @return
-     */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public InsurancePolicyResDTO getInsurancePolicyById(Long id) {
+    public Result getInsurancePolicyById(Long id) {
         // 根据ID查询保险单信息
         InsurancePolicy insurancePolicy = insurancePolicyMapper.getInsurancePolicyById(id);
         // 将保险单信息转换为DTO对象
@@ -113,18 +109,17 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
         }
         result.setCustomerInfoList(customerInfoList);
 
-        // 返回包含保险单详细信息的DTO对象
-        return result;
+        if(BeanUtil.isNotEmpty(result)){
+            // 返回包含保险单详细信息的DTO对象
+            return Result.success(result);
+        } else {
+            return Result.error("查询失败,您查询的保单信息不存在");
+        }
     }
 
-    /**
-     * 根据id更新保单信息
-     * @param id
-     * @param insurancePolicyReqDTO
-     */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updateInsurancePolicyById(Long id, InsurancePolicyReqDTO insurancePolicyReqDTO) {
+    public Result updateInsurancePolicyById(Long id, InsurancePolicyReqDTO insurancePolicyReqDTO) {
         // 根据ID查询保险单信息
         InsurancePolicy insurancePolicy = insurancePolicyMapper.getInsurancePolicyById(id);
         Long policyNo = insurancePolicy.getPolicyNo();
@@ -163,41 +158,38 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
         List<InsurancePolicy> newPolicyList = createInsurancePolicies(insurancePolicyReqDTO, productList, policyNo, proposalNo);
 
         // 批量插入保险单信息
-        insurancePolicyMapper.batchInsertInsurancePolicy(newPolicyList);
+        Integer affectedRows = insurancePolicyMapper.batchInsertInsurancePolicy(newPolicyList);
+        if(affectedRows > 0){
+            return Result.success();
+        } else {
+            return Result.error("新增客户信息失败,请重试");
+        }
     }
 
-    /**
-     * 根据ID删除保险单信息
-     * @param id
-     */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteInsurancePolicyById(Long id) {
+    public Result deleteInsurancePolicyById(Long id) {
         // 根据ID查询保险单信息
         InsurancePolicy insurancePolicy = insurancePolicyMapper.getInsurancePolicyById(id);
         if (BeanUtil.isNotEmpty(insurancePolicy)) {
             // 删除保险单信息和关联的客户信息
             insurancePolicyMapper.deleteInsurancePolicy(insurancePolicy.getPolicyNo());
             customerInfoMapper.deleteCustomerInfoByPolicyNo(insurancePolicy.getPolicyNo());
+            return Result.success();
         } else {
             // 如果保险单不存在，抛出异常
             throw new RuntimeException("您要删除的保单信息不存在");
         }
     }
 
-    /**
-     * 保单分页查询
-     * @param policyQueryRequest
-     * @return
-     */
     @Override
-    public PageBean getPoliciesByCondition(PolicyQueryRequest policyQueryRequest) {
+    public Result getPoliciesByCondition(PolicyQueryRequest policyQueryRequest) {
         // 使用PageHelper进行分页查询
         PageHelper.startPage(policyQueryRequest.getPageNum(), policyQueryRequest.getPageSize());
         // 执行查询
         Page resultPage = insurancePolicyMapper.list(policyQueryRequest);
         // 返回分页结果
-        return new PageBean(resultPage.getTotal(), resultPage.getResult());
+        return Result.success(new PageBean(resultPage.getTotal(), resultPage.getResult()));
     }
 
     /**
@@ -311,7 +303,7 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
             }
         } else if (BENEFICIARYTYPE_DESIGNATED.equals(beneficiaryType)) {
             if (policyholderCount == 0 || insuredCount == 0 || beneficiaryCount == 0) {
-                throw new RuntimeException("请检查客户信息是否正确");
+                throw new RuntimeException("请检查投保人信息是否正确");
             }
             int beneficiaryRate = 0;
             for (CustomerInfo customer : customerInfoList) {
@@ -320,7 +312,7 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
                 }
             }
             if (beneficiaryRate != 100) {
-                throw new RuntimeException("请检查收益人收益比例是否正确");
+                throw new RuntimeException("请检查投保人信息是否正确");
             }
         } else {
             throw new RuntimeException("您输入的受益人类型不正确,请重新检查");

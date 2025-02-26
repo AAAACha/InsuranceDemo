@@ -17,7 +17,7 @@ import java.util.List;
 public interface InsurancePolicyMapper{
 
     @Update("update insurance_policy set is_deleted = 1 where policy_no = #{policyNo}")
-    void deleteInsurancePolicy(Long policy_no);
+    Integer deleteInsurancePolicy(Long policy_no);
 
     //@Select("select * from insurance_system.insurance_policy ip where id = #{id}")
     InsurancePolicy getInsurancePolicyById(Long id);
@@ -26,12 +26,12 @@ public interface InsurancePolicyMapper{
 
     Page list(PolicyQueryRequest policyQueryRequest);
 
-    void insertInsurancePolicy(InsurancePolicy insurancePolicy);
+    Integer insertInsurancePolicy(InsurancePolicy insurancePolicy);
 
-    void updateInsurancePolicyById(InsurancePolicy insurancePolicy);
+    Integer updateInsurancePolicyById(InsurancePolicy insurancePolicy);
 
     @Delete("delete from insurance_policy where policy_no = #{policyNo}")
-    void deleteInsurancePolicyByPolicyNo(Long policyNo);
+    Integer deleteInsurancePolicyByPolicyNo(Long policyNo);
 
-    void batchInsertInsurancePolicy(List<InsurancePolicy> policyList);
+    Integer batchInsertInsurancePolicy(List<InsurancePolicy> policyList);
 }

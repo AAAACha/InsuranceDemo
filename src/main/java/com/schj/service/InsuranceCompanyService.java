@@ -1,7 +1,7 @@
 package com.schj.service;
 
 import com.schj.pojo.dto.request.InsuranceCompanyReqDTO;
-import com.schj.pojo.dto.response.InsuranceCompanyResDTO;
+import com.schj.pojo.po.Result;
 import org.springframework.stereotype.Service;
 
 /**
@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 @Service
 public interface InsuranceCompanyService{
 
-    void insertInsuranceCompany(InsuranceCompanyReqDTO insuranceCompanyReqDTO);
+    Result insertInsuranceCompany(InsuranceCompanyReqDTO insuranceCompanyReqDTO);
 
-    InsuranceCompanyResDTO getInsuranceCompanyById(Long id);
+    Result getInsuranceCompanyById(Long id);
 
-    void updateInsuranceCompanyById(Long id, InsuranceCompanyReqDTO insuranceCompanyReqDTO);
+    Result updateInsuranceCompanyById(Long id, InsuranceCompanyReqDTO insuranceCompanyReqDTO);
 
-    void deleteInsuranceCompanyById(Long id);
+    Result deleteInsuranceCompanyById(Long id);
 }

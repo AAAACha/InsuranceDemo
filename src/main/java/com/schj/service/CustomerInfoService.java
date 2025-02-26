@@ -1,7 +1,7 @@
 package com.schj.service;
 
 import com.schj.pojo.dto.request.CustomerInfoReqDTO;
-import com.schj.pojo.dto.response.CustomerInfoResDTO;
+import com.schj.pojo.po.Result;
 import org.springframework.stereotype.Service;
 
 /**
@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 @Service
 public interface CustomerInfoService {
 
-    void insertCustomerInfoService(CustomerInfoReqDTO customerInfoReqDTO);
+    Result insertCustomerInfoService(CustomerInfoReqDTO customerInfoReqDTO);
 
-    CustomerInfoResDTO getCustomerInfoById(Long id);
+    Result getCustomerInfoById(Long id);
 
-    void updateCustomerInfoById(Long id, CustomerInfoReqDTO customerInfoReqDTO);
+    Result updateCustomerInfoById(Long id, CustomerInfoReqDTO customerInfoReqDTO);
 
-    void deleteCustomerInfoById(Long id);
+    Result deleteCustomerInfoById(Long id);
 }

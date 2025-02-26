@@ -24,23 +24,19 @@ public class ExcelExporterController {
 
     /**
      * 文件导出
-     *
+     * <p>
      * 导出按照更新时间降序排列的先count条数据道excel文件中(count>0 && count <= 5000)
+     *
      * @param count
      * @return
      */
     @GetMapping("/exporter/{count}")
-    public Result ExcelExporter(@PathVariable int count){
-        try {
-            if(count > 0 && count <= 5000){
-                excelExporterService.ExcelExporter(count);
-                return Result.success();
-            } else {
-                return  Result.error("导出的数据必须在0-5000条内");
-            }
-        } catch (Exception e){
-          log.error("文件导出失败, 失败原因:"+e);
-          return  Result.error("文件导出失败,失败原因,请重试");
+    public Result ExcelExporter(@PathVariable int count) {
+        if (count > 0 && count <= 5000) {
+            excelExporterService.ExcelExporter(count);
+            return Result.success();
+        } else {
+            return Result.error("导出的数据必须在0-5000条内");
         }
     }
 }

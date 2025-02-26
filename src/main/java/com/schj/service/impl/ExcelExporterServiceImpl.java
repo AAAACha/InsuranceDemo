@@ -8,6 +8,7 @@ import com.schj.mapper.InsurancePolicyMapper;
 import com.schj.pojo.po.CustomerInfo;
 import com.schj.pojo.po.ExcelExporter;
 import com.schj.pojo.po.InsurancePolicy;
+import com.schj.pojo.po.Result;
 import com.schj.service.ExcelExporterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,7 +41,7 @@ public class ExcelExporterServiceImpl implements ExcelExporterService {
 
     @Override
     @Transactional
-    public void ExcelExporter(int count) {
+    public Result ExcelExporter(int count) {
         // 定义Excel文件的路径和名称，使用格式化后的日期时间字符串
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
         String fileName = LocalDateTime.now().format(formatter) + "_保单信息表.xlsx";
@@ -57,6 +58,8 @@ public class ExcelExporterServiceImpl implements ExcelExporterService {
 
         // 使用EasyExcel库将保险政策信息列表写入Excel文件中
         writeExcelFile(excelFile, excelExporterList);
+
+        return Result.success();
     }
 
     /**

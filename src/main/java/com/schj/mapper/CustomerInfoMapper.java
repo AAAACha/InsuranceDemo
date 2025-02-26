@@ -18,7 +18,7 @@ public interface CustomerInfoMapper{
      * @param customerInfo
      * @return
      */
-    Boolean insertCustomerInfoService(CustomerInfo customerInfo);
+    Integer insertCustomerInfoService(CustomerInfo customerInfo);
 
     /**
      * 根据id查询客户信息
@@ -32,14 +32,14 @@ public interface CustomerInfoMapper{
      * @param customerInfo
      * @return
      */
-    Boolean updateCustomerInfoById(CustomerInfo customerInfo);
+    Integer updateCustomerInfoById(CustomerInfo customerInfo);
 
     /**
      * 根据id删除客户信息
      * @param id
      * @return
      */
-    Boolean deleteCustomerInfoById(Long id);
+    Integer deleteCustomerInfoById(Long id);
 
     /**
      * 根据保单id查找客户信息
@@ -53,11 +53,11 @@ public interface CustomerInfoMapper{
     void deleteInsurancePolicyByPolicyNo(Long policyNo);
 
     @Delete("update customer_info set is_deleted = 1 where policy_no = #{policyNo}")
-    void deleteCustomerInfoByPolicyNo(Long policyNo);
+    Integer deleteCustomerInfoByPolicyNo(Long policyNo);
 
     /**
      * 批量插入客户信息
      * @param customerInfoList
      */
-    void batchInsertCustomerInfo(List<CustomerInfo> customerInfoList);
+    Integer batchInsertCustomerInfo(List<CustomerInfo> customerInfoList);
 }

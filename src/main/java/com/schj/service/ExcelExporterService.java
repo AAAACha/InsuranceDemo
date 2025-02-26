@@ -1,5 +1,6 @@
 package com.schj.service;
 
+import com.schj.pojo.po.Result;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,5 +14,5 @@ public interface ExcelExporterService {
      * 文件导出
      * @param count
      */
-    void ExcelExporter(int count);
+    Result ExcelExporter(int count);
 }

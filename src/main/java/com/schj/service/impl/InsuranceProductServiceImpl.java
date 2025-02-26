@@ -7,6 +7,7 @@ import com.schj.mapper.InsuranceProductMapper;
 import com.schj.pojo.dto.request.InsuranceProductReqDTO;
 import com.schj.pojo.dto.response.InsuranceProductResDTO;
 import com.schj.pojo.po.InsuranceProduct;
+import com.schj.pojo.po.Result;
 import com.schj.service.InsuranceProductService;
 import com.schj.utils.SnowflakeIdWorker;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ public class InsuranceProductServiceImpl implements InsuranceProductService {
      * @param insuranceProductReqDTO 险种请求数据传输对象，包含待插入的险种信息
      */
     @Override
-    public void insertInsuranceProduct(InsuranceProductReqDTO insuranceProductReqDTO) {
+    public Result insertInsuranceProduct(InsuranceProductReqDTO insuranceProductReqDTO) {
 
         // 将请求数据转换为险种对象
         InsuranceProduct insuranceProduct = BeanUtil.toBean(insuranceProductReqDTO, InsuranceProduct.class);
@@ -47,7 +48,10 @@ public class InsuranceProductServiceImpl implements InsuranceProductService {
         long id = snowflakeIdWorker.nextId();
         insuranceProduct.setId(id);
 
-        checkProduct(insuranceProductReqDTO);
+        String resultMsg = checkProduct(insuranceProductReqDTO);
+        if (BeanUtil.isNotEmpty(resultMsg)){
+            return Result.error(resultMsg);
+        }
 
         // 设置创建者和创建时间等信息
         insuranceProduct.setCreator("admin");
@@ -57,7 +61,12 @@ public class InsuranceProductServiceImpl implements InsuranceProductService {
         insuranceProduct.setIsDeleted(0);
 
         // 调用Mapper层方法插入保险产品信息
-        insuranceProductMapper.insertInsuranceProduct(insuranceProduct);
+        Integer affectedRows = insuranceProductMapper.insertInsuranceProduct(insuranceProduct);
+        if(affectedRows > 0){
+            return Result.success();
+        } else {
+            return Result.error("新增客户信息失败,请重试");
+        }
     }
 
     /**
@@ -69,7 +78,7 @@ public class InsuranceProductServiceImpl implements InsuranceProductService {
      * @return InsuranceProductResDTO 包含保险产品信息的响应数据传输对象
      */
     @Override
-    public InsuranceProductResDTO getInsuranceProductById(Long id) {
+    public Result getInsuranceProductById(Long id) {
         // 通过ID从数据库中查询保险产品信息
         InsuranceProduct insuranceProduct =  insuranceProductMapper.getInsuranceProductById(id);
 
@@ -80,32 +89,36 @@ public class InsuranceProductServiceImpl implements InsuranceProductService {
         if(BeanUtil.isNotEmpty(productCategory)){
             insuranceProductResDTO.setProductCategory(productCategory);
         } else {
-            throw new RuntimeException("您查询的险种的主附险类型不合法");
+            return Result.error("您查询的险种的主附险类型不合法");
         }
 
         String durationType = enumValue.getEnumByCode(insuranceProductResDTO.getDurationType());
         if(BeanUtil.isNotEmpty(durationType)){
             insuranceProductResDTO.setDurationType(durationType);
         } else {
-            throw new RuntimeException("您查询的险种的长短险类型不合法");
+            return Result.error("您查询的险种的长短险类型不合法");
         }
 
         String paymentMethod = enumValue.getEnumByCode(insuranceProductResDTO.getPaymentMethod());
         if(BeanUtil.isNotEmpty(paymentMethod)){
             insuranceProductResDTO.setPaymentMethod(paymentMethod);
         } else {
-            throw new RuntimeException("您查询的险种的缴费类型不合法");
+            return Result.error("您查询的险种的缴费类型不合法");
         }
 
         String productStatus = enumValue.getEnumByCode(insuranceProductResDTO.getProductStatus());
         if(BeanUtil.isNotEmpty(productStatus)){
             insuranceProductResDTO.setProductStatus(productStatus);
         } else {
-            throw new RuntimeException("您查询的险种的状态不合法");
+            return Result.error("您查询的险种的状态不合法");
         }
 
-        // 返回保险产品信息的响应数据传输对象
-        return insuranceProductResDTO;
+        if(BeanUtil.isNotEmpty(insuranceProductResDTO)){
+            // 返回保险产品信息的响应数据传输对象
+            return Result.success(insuranceProductResDTO);
+        } else {
+            return Result.error("您查询的险种信息不存在");
+        }
     }
 
     /**
@@ -118,7 +131,7 @@ public class InsuranceProductServiceImpl implements InsuranceProductService {
      * @param insuranceProductReqDTO 包含待更新的保险产品信息的请求数据传输对象
      */
     @Override
-    public void updateInsuranceProductById(Long id, InsuranceProductReqDTO insuranceProductReqDTO) {
+    public Result updateInsuranceProductById(Long id, InsuranceProductReqDTO insuranceProductReqDTO) {
 
         // 将请求数据转换为保险产品对象
         InsuranceProduct insuranceProduct = BeanUtil.toBean(insuranceProductReqDTO, InsuranceProduct.class);
@@ -126,14 +139,22 @@ public class InsuranceProductServiceImpl implements InsuranceProductService {
         // 设置保险产品的ID
         insuranceProduct.setId(id);
 
-        checkProduct(insuranceProductReqDTO);
+        String resultMsg = checkProduct(insuranceProductReqDTO);
+        if (BeanUtil.isNotEmpty(resultMsg)){
+            return Result.error(resultMsg);
+        }
 
         // 设置修改者和修改时间等信息
         insuranceProduct.setUpdater("admin");
         insuranceProduct.setUpdatedTime(LocalDateTime.now());
 
         // 调用Mapper层方法更新保险产品信息
-        insuranceProductMapper.updateInsuranceProductById(insuranceProduct);
+        Integer affectedRows = insuranceProductMapper.updateInsuranceProductById(insuranceProduct);
+        if(affectedRows > 0){
+            return Result.success();
+        } else {
+            return Result.error("修改客户信息失败,请重试");
+        }
     }
 
     /**
@@ -144,32 +165,45 @@ public class InsuranceProductServiceImpl implements InsuranceProductService {
      * @param id 保险产品的唯一标识符
      */
     @Override
-    public void deleteInsuranceProductById(Long id) {
+    public Result deleteInsuranceProductById(Long id) {
         // 调用Mapper层方法根据ID删除保险产品信息
-        insuranceProductMapper.deleteInsuranceProductById(id);
+        Integer affectedRows = insuranceProductMapper.deleteInsuranceProductById(id);
+        if(affectedRows > 0){
+            return Result.success();
+        } else {
+            return Result.error("新增客户信息失败,请重试");
+        }
     }
 
     /**
      * 判断险种信息
      * @param insuranceProductReqDTO
      */
-    private void checkProduct(InsuranceProductReqDTO insuranceProductReqDTO){
+    private String checkProduct(InsuranceProductReqDTO insuranceProductReqDTO){
+
+        String resultMsg = "";
+
         // 验证并设置主附类别
         String productCategory = enumValue.getEnumByCode(insuranceProductReqDTO.getProductCategory());
         if(BeanUtil.isEmpty(productCategory)){
-            throw new RuntimeException("您输入的主附险标识不存在");
+            resultMsg = "您输入的主附险标识不存在";
+            return resultMsg;
         }
 
         // 验证并设置长短险类型
         String durationType = enumValue.getEnumByCode(insuranceProductReqDTO.getDurationType());
         if(BeanUtil.isEmpty(durationType)){
-            throw new RuntimeException("您输入的长短险标识不存在");
+            resultMsg = "您输入的长短险标识不存在";
+            return resultMsg;
         }
 
         // 验证并设置险种状态
         String productStatus = enumValue.getEnumByCode(insuranceProductReqDTO.getProductStatus());
         if(BeanUtil.isEmpty(productStatus)){
-            throw new RuntimeException("您输入的险种状态不存在");
+            resultMsg = "您输入的险种状态不存在";
+            return resultMsg;
         }
+
+        return resultMsg;
     }
 }
