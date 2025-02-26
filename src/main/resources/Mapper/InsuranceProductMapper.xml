@@ -62,18 +62,18 @@
     <select id="getInsuranceProductById"
             resultMap="productResultMap">
         select id,
-               product_code as productCode,
-               product_name as productName,
-               product_category as productCategory,
-               duration_type as durationType,
-               product_status as productStatus,
-               payment_years as paymentYears,
-               payment_method as paymentMethod,
-               created_time as createdTime,
-               updated_time as updatedTime,
+               product_code,
+               product_name,
+               product_category,
+               duration_type,
+               product_status,
+               payment_years,
+               payment_method,
+               created_time,
+               updated_time,
                creator,
                updater,
-               is_deleted as isDeleted
+               is_deleted
         from insurance_product
         where id = #{id}
         and is_deleted = 0
@@ -81,18 +81,18 @@
     <select id="selectInsuranceProductByIdList"
             resultMap="productResultMap">
         select id,
-        product_code as productCode,
-        product_name as productName,
-        product_category as productCategory,
-        duration_type as durationType,
-        product_status as productStatus,
-        payment_years as paymentYears,
-        payment_method as paymentMethod,
-        created_time as createdTime,
-        updated_time as updatedTime,
+        product_code,
+        product_name,
+        product_category,
+        duration_type,
+        product_status,
+        payment_years,
+        payment_method,
+        created_time,
+        updated_time,
         creator,
         updater,
-        is_deleted as isDeleted
+        is_deleted
         from insurance_product
         where id in
         <foreach collection="productIdList" item="id" open="(" separator="," close=")">

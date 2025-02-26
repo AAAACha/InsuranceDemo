@@ -50,18 +50,17 @@
 
     <select id="getInsuranceCompanyById"
             resultMap="companyResultMap">
-        select
-            id,
-            company_code as companyCode,
-            company_name as companyName,
-            company_type as companyType,
-            created_time as createdTime,
-            creator,
-            updated_time as updatedTime,
-            updater,
-            is_deleted as isDeleted
+        select id,
+               company_code,
+               company_name,
+               company_type,
+               created_time,
+               creator,
+               updated_time,
+               updater,
+               is_deleted
         from insurance_company
         where id = #{id}
-        and is_deleted = 0
+          and is_deleted = 0
     </select>
 </mapper>

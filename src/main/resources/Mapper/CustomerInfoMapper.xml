@@ -75,22 +75,21 @@
 
     <select id="getCustomerInfoById"
             resultMap="customerInfoResultMap">
-        select
-            id,
-            policy_no as policyNo,
-            customer_type as customerType,
-            id_type as idType,
-            id_number as idNumber,
-            full_name as fullName,
-            gender,
-            contact_phone as contactPhone,
-            contact_address as contactAddress,
-            benefit_ratio as benefitRatio,
-            created_time as createdTime,
-            creator,
-            updated_time as updatedTime,
-            updater,
-            is_deleted as isDeleted
+        select id,
+               policy_no,
+               customer_type,
+               id_type,
+               id_number,
+               full_name,
+               gender,
+               contact_phone,
+               contact_address,
+               benefit_ratio,
+               created_time,
+               creator,
+               updated_time,
+               updater,
+               is_deleted
         from customer_info
         where id = #{id}
           and is_deleted = 0
@@ -99,20 +98,20 @@
     <select id="getCustomerInfoByPolicyNo"
             resultMap="customerInfoResultMap">
         select id,
-               policy_no       as policyNo,
-               customer_type   as customerType,
-               id_type         as idType,
-               id_number       as idNumber,
-               full_name       as fullName,
+               policy_no,
+               customer_type,
+               id_type,
+               id_number,
+               full_name,
                gender,
-               contact_phone   as contactPhone,
-               contact_address as contactAddress,
-               benefit_ratio   as benefitRatio,
-               created_time    as createdTime,
+               contact_phone,
+               contact_address,
+               benefit_ratio,
+               created_time,
                creator,
-               updated_time    as updatedTime,
+               updated_time,
                updater,
-               is_deleted      as isDeleted
+               is_deleted
         from customer_info
         where policy_no = #{PolicyNo}
           and is_deleted = 0
