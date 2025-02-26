@@ -311,7 +311,7 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
             }
         } else if (BENEFICIARYTYPE_DESIGNATED.equals(beneficiaryType)) {
             if (policyholderCount == 0 || insuredCount == 0 || beneficiaryCount == 0) {
-                throw new RuntimeException("请检查投保人信息是否正确");
+                throw new RuntimeException("请检查客户信息是否正确");
             }
             int beneficiaryRate = 0;
             for (CustomerInfo customer : customerInfoList) {
@@ -320,7 +320,7 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
                 }
             }
             if (beneficiaryRate != 100) {
-                throw new RuntimeException("请检查投保人信息是否正确");
+                throw new RuntimeException("请检查收益人收益比例是否正确");
             }
         } else {
             throw new RuntimeException("您输入的受益人类型不正确,请重新检查");
