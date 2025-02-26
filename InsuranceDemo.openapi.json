@@ -1,0 +1,1098 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "InsuranceDemo",
+    "description": "",
+    "version": "1.0.0"
+  },
+  "tags": [],
+  "paths": {
+    "/insurance-company/insertInsuranceCompany": {
+      "post": {
+        "summary": "新增保险公司信息",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/%E4%BF%9D%E9%99%A9%E5%85%AC%E5%8F%B8req"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/result"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/insurance-company/getInsuranceCompanyById/{id}": {
+      "get": {
+        "summary": "根据id获取保险公司信息",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/result"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/insurance-company/deleteInsuranceCompanyById/{id}": {
+      "delete": {
+        "summary": "根据id删除保险公司信息",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/result"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/insurance-company/updateInsuranceCompanyById/{id}": {
+      "put": {
+        "summary": "修改保险公司信息",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/%E4%BF%9D%E9%99%A9%E5%85%AC%E5%8F%B8req"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/customer-info/insertCustomerInfoService": {
+      "post": {
+        "summary": "新增客户信息",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "idType": {
+                    "type": "string",
+                    "examples": [
+                      "foreigner_permanent_residence_permit",
+                      "home_return_permit",
+                      "identity_card",
+                      "passport",
+                      "taiwan_compatriot_permit"
+                    ]
+                  },
+                  "idNumber": {
+                    "type": "string",
+                    "pattern": "[1-9]\\d{5}(18|19|20)\\d{2}((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1]))\\d{3}[0-9Xx]"
+                  },
+                  "fullName": {
+                    "type": "string"
+                  },
+                  "gender": {
+                    "type": "string"
+                  },
+                  "contactPhone": {
+                    "type": "string",
+                    "pattern": "1[3-9]\\d{9}"
+                  },
+                  "contactAddress": {
+                    "type": "string"
+                  },
+                  "customerType": {
+                    "type": "string",
+                    "examples": [
+                      "A",
+                      "B",
+                      "S"
+                    ]
+                  },
+                  "benefitRatio": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100
+                  },
+                  "policyId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "policyId",
+                  "idType",
+                  "idNumber",
+                  "fullName",
+                  "gender",
+                  "contactPhone",
+                  "contactAddress",
+                  "customerType",
+                  "benefitRatio"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/result"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/customer-info/getCustomerInfoById/{id}": {
+      "get": {
+        "summary": "根据id查询客户信息",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/result"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/customer-info/updateCustomerInfoById/{id}": {
+      "put": {
+        "summary": "修改客户信息",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/%E5%AE%A2%E6%88%B7%E4%BF%A1%E6%81%AFreq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/customer-info/deleteCustomerInfoById/{id}": {
+      "delete": {
+        "summary": "根据id删除客户信息",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/result"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/insurance-product/insertInsuranceProduct": {
+      "post": {
+        "summary": "新增险种信息",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/%E9%99%A9%E7%A7%8D%E4%BF%A1%E6%81%AFreq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/insurance-product/getInsuranceProductById/{id}": {
+      "get": {
+        "summary": "根据id查询险种信息",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/result"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/insurance-product/updateInsuranceProductById/{id}": {
+      "put": {
+        "summary": "修改险种信息",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/%E9%99%A9%E7%A7%8D%E4%BF%A1%E6%81%AFreq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/result"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/insurance-product/deleteInsuranceProductById/{id}": {
+      "delete": {
+        "summary": "根据id删除险种信息",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/result"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/insurance-policy/insertInsurancePolicy": {
+      "post": {
+        "summary": "新增保单信息",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/%E4%BF%9D%E5%8D%95%E4%BF%A1%E6%81%AFreq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/result"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/insurance-policy/deleteInsurancePolicyById/{id}": {
+      "delete": {
+        "summary": "根据id删除保单信息",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/result"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/insurance-policy/getInsurancePolicyById/{id}": {
+      "get": {
+        "summary": "根据id查询保单信息",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/result"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/insurance-policy/updateInsurancePolicyById/{id}": {
+      "put": {
+        "summary": "修改保单信息",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/%E4%BF%9D%E5%8D%95%E4%BF%A1%E6%81%AFreq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/result"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/insurance-policy/search": {
+      "get": {
+        "summary": " 保单分页查询",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/%E4%BF%9D%E5%8D%95%E5%88%86%E9%A1%B5%E6%9F%A5%E8%AF%A2req"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/result"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/excel-exporter/exporter/{count}": {
+      "get": {
+        "summary": "导出文件",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "count",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/result"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "保险公司req": {
+        "type": "object",
+        "properties": {
+          "companyCode": {
+            "type": "string",
+            "title": "保险公司编码"
+          },
+          "companyName": {
+            "type": "string",
+            "title": "保险公司名称",
+            "examples": [
+              "中国平安保险",
+              "中国人寿保险",
+              "中国太平洋保险",
+              "中国人民保险"
+            ]
+          },
+          "companyType": {
+            "type": "string",
+            "title": "保险公司类型",
+            "examples": [
+              "life_insurance",
+              "property_insurance"
+            ]
+          }
+        },
+        "required": [
+          "companyCode",
+          "companyType",
+          "companyName"
+        ]
+      },
+      "result": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "data": {
+            "type": "object",
+            "properties": {}
+          },
+          "msg": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "msg"
+        ]
+      },
+      "客户信息req": {
+        "type": "object",
+        "properties": {
+          "idType": {
+            "type": "string",
+            "examples": [
+              "foreigner_permanent_residence_permit",
+              "home_return_permit",
+              "identity_card",
+              "passport",
+              "taiwan_compatriot_permit"
+            ]
+          },
+          "idNumber": {
+            "type": "string",
+            "pattern": "[1-9]\\d{5}(18|19|20)\\d{2}((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1]))\\d{3}[0-9Xx]"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "string"
+          },
+          "contactPhone": {
+            "type": "string",
+            "pattern": "1[3-9]\\d{9}"
+          },
+          "contactAddress": {
+            "type": "string"
+          },
+          "customerType": {
+            "type": "string",
+            "examples": [
+              "A",
+              "B",
+              "S"
+            ]
+          },
+          "benefitRatio": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          }
+        },
+        "required": [
+          "idType",
+          "idNumber",
+          "fullName",
+          "gender",
+          "contactPhone",
+          "contactAddress",
+          "benefitRatio",
+          "customerType"
+        ]
+      },
+      "保单信息req": {
+        "type": "object",
+        "properties": {
+          "companyCode": {
+            "type": "string",
+            "description": "保险公司编码",
+            "maxLength": 20,
+            "examples": [
+              "79",
+              "25",
+              "44",
+              "11"
+            ]
+          },
+          "companyName": {
+            "type": "string",
+            "description": "保险公司名称",
+            "maxLength": 30,
+            "examples": [
+              "中国人民保险",
+              "中国人寿保险",
+              "中国平安保险",
+              "泰康保险集团"
+            ]
+          },
+          "productList": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "险种id"
+                },
+                "paymentYears": {
+                  "type": "integer",
+                  "description": "缴费年限"
+                },
+                "paymentMethod": {
+                  "type": "string",
+                  "description": "缴费方式"
+                }
+              },
+              "required": [
+                "id",
+                "paymentMethod",
+                "paymentYears"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 5
+          },
+          "policyStatus": {
+            "type": "string",
+            "description": "保单状态",
+            "enum": [
+              "已投保",
+              "生效中",
+              "已终止",
+              "已退保"
+            ],
+            "examples": [
+              "active",
+              "claims_processing",
+              "lapsed",
+              "terminated",
+              "underwriting"
+            ]
+          },
+          "applicationTime": {
+            "description": "投保时间",
+            "type": "string",
+            "format": "date-time"
+          },
+          "effectiveTime": {
+            "description": "生效时间",
+            "type": "string",
+            "format": "date-time"
+          },
+          "premium": {
+            "type": "number",
+            "description": "保费",
+            "minimum": 0,
+            "maximum": 200000,
+            "format": "^\\d+(\\.\\d{2})?$"
+          },
+          "insuredAmount": {
+            "type": "number",
+            "description": "保额",
+            "minimum": 0
+          },
+          "paymentTimes": {
+            "type": "integer",
+            "description": "缴费次数",
+            "minimum": 1,
+            "maximum": 20
+          },
+          "coveragePeriod": {
+            "type": "string",
+            "description": "保障期间",
+            "maxLength": 50,
+            "examples": [
+              "1年",
+              "3年",
+              "5年",
+              "10年",
+              "20年",
+              "终身"
+            ]
+          },
+          "creator": {
+            "description": "创建人",
+            "type": "string",
+            "maxLength": 50
+          },
+          "beneficiaryType": {
+            "type": "string",
+            "examples": [
+              "designated",
+              "statutory"
+            ]
+          },
+          "customerInfoList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/%E5%AE%A2%E6%88%B7%E4%BF%A1%E6%81%AFreq"
+            }
+          }
+        },
+        "required": [
+          "companyCode",
+          "companyName",
+          "policyStatus",
+          "applicationTime",
+          "effectiveTime",
+          "premium",
+          "insuredAmount",
+          "creator",
+          "customerInfoList",
+          "productList",
+          "beneficiaryType"
+        ]
+      },
+      "险种信息req": {
+        "type": "object",
+        "properties": {
+          "productCode": {
+            "type": "string",
+            "description": "险种代码"
+          },
+          "productName": {
+            "type": "string",
+            "description": "险种名称",
+            "examples": [
+              "定期寿险",
+              "终身寿险",
+              "两全保险",
+              "医疗保险",
+              "疾病保险",
+              "失能收入损失保险",
+              "护理保险",
+              "意外伤害保险",
+              "年金保险"
+            ]
+          },
+          "productCategory": {
+            "type": "string",
+            "description": "主附险标识",
+            "examples": [
+              "base_policy",
+              "accessory_insurance"
+            ]
+          },
+          "durationType": {
+            "type": "string",
+            "description": "长短险标识",
+            "examples": [
+              "long_term_insurance",
+              "short-term insurance"
+            ]
+          },
+          "productStatus": {
+            "type": "string",
+            "description": "险种状态",
+            "examples": [
+              "approval",
+              "effective",
+              "out_of_sale"
+            ]
+          },
+          "paymentYears": {
+            "type": "integer",
+            "description": "缴费年限",
+            "examples": [
+              1,
+              3,
+              5,
+              10,
+              15,
+              19,
+              20
+            ]
+          },
+          "paymentMethod": {
+            "type": "string",
+            "description": "缴费方式",
+            "examples": [
+              "monthly_payment",
+              "quarterly_payment",
+              "annual_payment",
+              "lump_sum_payment"
+            ]
+          }
+        },
+        "required": [
+          "productCode",
+          "productCategory",
+          "productName",
+          "productStatus",
+          "durationType",
+          "paymentYears",
+          "paymentMethod"
+        ]
+      },
+      "保单分页查询req": {
+        "type": "object",
+        "properties": {
+          "policyNo": {
+            "type": "string",
+            "title": "保单号"
+          },
+          "companyName": {
+            "type": "string",
+            "title": "保司名称"
+          },
+          "productName": {
+            "type": "string",
+            "title": "险种名称"
+          },
+          "startApplicationTime": {
+            "type": "string",
+            "title": "投保时间-开始时间"
+          },
+          "endApplicationTime": {
+            "type": "string",
+            "title": "投保时间-结束时间"
+          },
+          "startEffectiveTime": {
+            "type": "string",
+            "title": "生效时间-开始时间"
+          },
+          "endEffectiveTime": {
+            "type": "string",
+            "title": "生效时间-结束时间"
+          },
+          "pageNum": {
+            "type": "integer",
+            "title": "当前页码"
+          },
+          "pageSize": {
+            "type": "integer",
+            "title": "每页大小"
+          }
+        },
+        "required": [
+          "policyNo",
+          "companyName",
+          "productName",
+          "startApplicationTime",
+          "endApplicationTime",
+          "startEffectiveTime",
+          "endEffectiveTime",
+          "pageNum",
+          "pageSize"
+        ]
+      },
+      "险种id数组": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "examples": [
+            "284622075283378176",
+            "284622090315763712",
+            "284622100491145216",
+            "284622122658041856",
+            "284622133630341120"
+          ],
+          "minLength": 1,
+          "maxLength": 5
+        }
+      }
+    },
+    "securitySchemes": {}
+  },
+  "servers": []
+}
